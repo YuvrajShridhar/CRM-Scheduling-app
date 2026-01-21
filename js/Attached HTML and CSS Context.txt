@@ -1,0 +1,628 @@
+Attached HTML and CSS Context
+
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 modal-content transform max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6 rounded-t-xl">
+                <h2 id="jobModalTitle" class="text-2xl font-bold text-white">Add New Job</h2>
+            </div>
+            
+            <form id="jobForm" class="p-8">
+                <input type="hidden" id="jobId" value="">
+                
+                <!-- Job Details Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Job Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Company <span class="text-red-500">*</span></label>
+                            <input id="jobCompany" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" required="">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Site <span class="text-red-500">*</span></label>
+                            <input id="jobSite" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" required="">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Job Number</label>
+                            <input id="jobNo" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Financial</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Cost (£)</label>
+                            <input id="jobCost" type="number" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition currency-input" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">PO Number</label>
+                            <input id="jobPO" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Category <span class="text-red-500">*</span></label>
+                            <select id="jobCategory" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" required=""><option value="FD - Installation">FD - Installation</option><option value="FD - Maintenance">FD - Maintenance</option><option value="FD - Other">FD - Other</option><option value="FD - Survey">FD - Survey</option><option value="FS - Installation">FS - Installation</option><option value="FS - Other">FS - Other</option><option value="FS - Survey">FS - Survey</option><option value="Other">Other</option></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scheduling Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Scheduling</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Start Date</label>
+                            <input id="jobStartDate" type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">End Date</label>
+                            <input id="jobEndDate" type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Assigned Engineers</label>
+                        <select id="jobEngineers" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" multiple="" size="6"><option value="LFTfvszeQXi27AAdwkJN">Angel Negoita (Fire Stopping - Contractors)</option><option value="YtRATEqJB8qlED7NhACw">Ben Cox-Dioulgeridis (Fire Doors)</option><option value="4DWLBROFlbYogjvmIccQ">Dean Sprigmore (Fire Doors - Contractors)</option><option value="Npn3O2EDEj2K8q0je3zB">Jack Sanders (Fire Stopping - Contractors)</option><option value="MGzrZ1H0J6TI6XSPBAcc">Konrad Lojeck (Fire Stopping - Contractors)</option><option value="QZsr95lPWlBMrhqH6n1j">Louis Walsh (Fire Doors)</option><option value="owwpAL48Bx9q8XIu4gYN">Nico Nastasiu (Fire Stopping - Contractors)</option><option value="TdbBAdcCoHBJ8Unx7AkQ">Nik Vallis (Labourer)</option><option value="hY7Fkn7NPQNkfhzFH3Wd">Paul Smith (Fire Doors)</option><option value="MJmm6eCTJeS13jkjmHsO">Serghei Plesca (Fire Stopping - Contractors)</option><option value="ydPbQdoSu0wjSDmDOjFu">Simon Rolfe (Fire Doors)</option><option value="KVYcdLduvB2rLYUxVupG">Terry Bainbridge (Warehouse)</option><option value="Cy1PkHArwMDxHIWe8Qxg">Toby Rolfe (Labourer)</option><option value="0pVK9xRL5DPwhAoZKTE2">Tom Bavington (Fire Stopping)</option></select>
+                    </div>
+                </div>
+
+                <!-- Status Checkboxes -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Status</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition cursor-pointer">
+                            <input id="jobIsScheduled" type="checkbox" class="w-5 h-5 text-red-600 rounded focus:ring-red-500">
+                            <span class="text-sm font-medium text-gray-700">Scheduled</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition cursor-pointer">
+                            <input id="jobAllowWeekendWork" type="checkbox" class="w-5 h-5 text-red-600 rounded focus:ring-red-500">
+                            <span class="text-sm font-medium text-gray-700">Weekend Work</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition cursor-pointer">
+                            <input id="jobIsProject" type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                            <span class="text-sm font-medium text-gray-700">Project</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition cursor-pointer">
+                            <input id="jobIsCompleted" type="checkbox" class="w-5 h-5 text-green-600 rounded focus:ring-green-500">
+                            <span class="text-sm font-medium text-gray-700">Completed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Project Applications Section (shown when Project is checked) -->
+                <div id="applicationsSection" class="mb-8 hidden">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-blue-200">Project Applications</h3>
+                    <div id="applicationsList" class="space-y-3 mb-4"></div>
+                    <button type="button" id="addApplicationBtn" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition shadow-md hover:shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>Add Application</span>
+                    </button>
+                </div>
+
+                <!-- Daily Exceptions Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3 pb-2 border-b-2 border-orange-200">Daily Exceptions</h3>
+                    <p class="text-sm text-gray-600 mb-4">Mark specific days when engineers won't be on site for this job</p>
+                    <div id="dailyExceptionsList" class="space-y-2 mb-4 max-h-40 overflow-y-auto"></div>
+                    <div class="flex items-center space-x-3">
+                        <select id="exceptionDate" class="flex-grow border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-500"><option value="">Select Date</option></select>
+                        <select id="exceptionEngineer" class="flex-grow border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-500"><option value="">Select Engineer</option></select>
+                        <button type="button" id="addExceptionBtn" class="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-medium transition">Add</button>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Notes</h3>
+                    <div id="notesList" class="max-h-40 overflow-y-auto bg-gray-50 p-4 rounded-lg border-2 border-gray-200 mb-3 space-y-2"><p class="text-gray-400 text-sm italic p-2">No notes yet.</p></div>
+                    <div class="flex items-start space-x-3">
+                        <textarea id="newJobNote" rows="3" class="flex-grow border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" placeholder="Add a note..."></textarea>
+                        <button type="button" id="addNoteBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg">Add</button>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 border-t-2 border-gray-200 pt-6 mt-6">
+                    <button type="button" id="cancelJobBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-medium transition">Cancel</button>
+                    <button type="button" id="deleteJobBtn" class="bg-red-100 hover:bg-red-200 text-red-700 py-3 px-6 rounded-lg font-medium transition hidden">Delete</button>
+                    <button type="button" id="completeJobBtn" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg hidden">Mark Complete</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg">Save Job</button>
+                </div>
+            </form>
+        </div>
+
+
+/* Matched Rule from user-agent */
+div {
+  display: block;
+}
+
+/* Matched Rule from user-agent */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Matched Rule from regular */
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+}
+
+/* Matched Rule from regular */
+*, ::after, ::before {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+  box-sizing: border-box;
+  border-top-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  border-left-width: 0px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(229, 231, 235);
+  border-right-color: rgb(229, 231, 235);
+  border-bottom-color: rgb(229, 231, 235);
+  border-left-color: rgb(229, 231, 235);
+}
+
+/* Matched Rule from regular */
+.modal-content {
+  transition: transform 0.3s ease-in-out;
+  transition-behavior: normal;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  transition-delay: 0s;
+  transition-property: transform;
+}
+
+/* Matched Rule from regular */
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+/* Matched Rule from regular */
+.max-h-\[90vh\] {
+  max-height: 90vh;
+  max-height: 90vh;
+}
+
+/* Matched Rule from regular */
+.w-full {
+  width: 100%;
+  width: 100%;
+}
+
+/* Matched Rule from regular */
+.max-w-3xl {
+  max-width: 48rem;
+  max-width: 48rem;
+}
+
+/* Matched Rule from regular */
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+/* Matched Rule from regular */
+.overflow-y-auto {
+  overflow-y: auto;
+  overflow-y: auto;
+}
+
+/* Matched Rule from regular */
+.rounded-xl {
+  border-radius: 0.75rem;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+}
+
+/* Matched Rule from regular */
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+/* Matched Rule from regular */
+.shadow-2xl {
+  --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+/* Inherited from ancestor level 1 (user-agent) */
+div {
+  display: block;
+}
+
+/* Inherited from ancestor level 1 (user-agent) */
+address, blockquote, center, div, figure, figcaption, footer, form, header, hr, legend, listing, main, p, plaintext, pre, summary, xmp, article, aside, h1, h2, h3, h4, h5, h6, hgroup, nav, section, search, table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th, dir, dd, dl, dt, menu, ol, ul, li, bdi, output, [dir="ltr" i], [dir="rtl" i], [dir="auto" i] {
+  unicode-bidi: isolate;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+*, ::after, ::before {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+  box-sizing: border-box;
+  border-top-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  border-left-width: 0px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(229, 231, 235);
+  border-right-color: rgb(229, 231, 235);
+  border-bottom-color: rgb(229, 231, 235);
+  border-left-color: rgb(229, 231, 235);
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.modal-backdrop {
+  transition: opacity 0.3s ease-in-out;
+  transition-behavior: normal;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  transition-delay: 0s;
+  transition-property: opacity;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.fixed {
+  position: fixed;
+  position: fixed;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.inset-0 {
+  inset: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.z-50 {
+  z-index: 50;
+  z-index: 50;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.hidden {
+  display: none;
+  display: none;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.items-center {
+  align-items: center;
+  align-items: center;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.justify-center {
+  justify-content: center;
+  justify-content: center;
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
+}
+
+/* Inherited from ancestor level 1 (regular) */
+.bg-opacity-50 {
+  --tw-bg-opacity: 0.5;
+  --tw-bg-opacity: 0.5;
+}
+
+/* Inherited from ancestor level 2 (user-agent) */
+body {
+  display: block;
+  margin-top: 8px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  margin-left: 8px;
+}
+
+/* Inherited from ancestor level 2 (regular) */
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+}
+
+/* Inherited from ancestor level 2 (regular) */
+*, ::after, ::before {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+  box-sizing: border-box;
+  border-top-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  border-left-width: 0px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(229, 231, 235);
+  border-right-color: rgb(229, 231, 235);
+  border-bottom-color: rgb(229, 231, 235);
+  border-left-color: rgb(229, 231, 235);
+}
+
+/* Inherited from ancestor level 2 (regular) */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6;
+  font-family: Inter, sans-serif;
+  background-color: rgb(243, 244, 246);
+}
+
+/* Inherited from ancestor level 2 (regular) */
+body {
+  margin: 0;
+  line-height: inherit;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  line-height: inherit;
+}
+
+/* Inherited from ancestor level 2 (regular) */
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+}
+
+/* Inherited from ancestor level 2 (regular) */
+.text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
+}
+
+/* Inherited from ancestor level 3 (user-agent) */
+html {
+  display: block;
+}
+
+/* Inherited from ancestor level 3 (user-agent) */
+:root {
+  view-transition-name: root;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+*, ::after, ::before {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+  box-sizing: border-box;
+  border-top-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  border-left-width: 0px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(229, 231, 235);
+  border-right-color: rgb(229, 231, 235);
+  border-bottom-color: rgb(229, 231, 235);
+  border-left-color: rgb(229, 231, 235);
+}
+
+/* Inherited from ancestor level 3 (regular) */
+:host, html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.5;
+  text-size-adjust: 100%;
+  tab-size: 4;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Inherited from ancestor level 3 (regular) */
+:host, :root {
+  --fa-style-family-brands: "Font Awesome 6 Brands";
+  --fa-font-brands: normal 400 1em/1 "Font Awesome 6 Brands";
+  --fa-style-family-brands: "Font Awesome 6 Brands";
+  --fa-font-brands: normal 400 1em/1 "Font Awesome 6 Brands";
+}
+
+/* Inherited from ancestor level 3 (regular) */
+:host, :root {
+  --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Free";
+  --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Free";
+}
+
+/* Inherited from ancestor level 3 (regular) */
+:host, :root {
+  --fa-style-family-classic: "Font Awesome 6 Free";
+  --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
+  --fa-style-family-classic: "Font Awesome 6 Free";
+  --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
+}

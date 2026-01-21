@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFS App - Debug Helper</title>
+    <style>
+        body { font-family: monospace; background: #f5f5f5; margin: 0; padding: 20px; }
+        .console { background: white; border: 1px solid #ddd; padding: 10px; margin-top: 10px; max-height: 300px; overflow-y: auto; border-radius: 4px; }
+        .error { color: red; font-weight: bold; }
+        .warn { color: orange; }
+        .info { color: blue; }
+        .success { color: green; }
+        button { padding: 8px 16px; margin: 5px 0; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .status.ok { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>PFS Team Schedule - Debug Console</h1>
+    <p>This page helps debug the main app by capturing console output and errors.</p>
+    
+    <button onclick="window.location.href='Gemini Test_2409.html'">Open Main App</button>
+    <button onclick="clearDebugConsole()">Clear Console</button>
+    <button onclick="checkFiles()">Check Files</button>
+    
+    <div id="status" class="status ok">Status: Monitoring...</div>
+    <div class="console" id="debugConsole"></div>
+
+    <script>
+        // Capture console logs and errors
+        const debugConsole = document.getElementById('debugConsole');
+        const statusDiv = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            debugConsole.appendChild(line);
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+
+        // Intercept console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function(...args) {
+            log(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+
+        console.error = function(...args) {
+            log(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            log(args.join(' '), 'warn');
+            originalWarn.apply(console, args);
+        };
+
+        // Capture unhandled errors
+        window.addEventListener('error', (e) => {
+            log(`UNCAUGHT ERROR: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
+            statusDiv.className = 'status error';
+            statusDiv.textContent = `Status: ERROR - ${e.message}`;
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            log(`UNHANDLED PROMISE REJECTION: ${e.reason}`, 'error');
+            statusDiv.className = 'status error';
+            statusDiv.textContent = `Status: ERROR - Unhandled Promise Rejection`;
+        });
+
+        function clearDebugConsole() {
+            debugConsole.innerHTML = '';
+            statusDiv.className = 'status ok';
+            statusDiv.textContent = 'Status: Cleared';
+        }
+
+        async function checkFiles() {
+            log('Checking required files...', 'info');
+            
+            const files = [
+                'js/app.js',
+                'js/config.js',
+                'js/ui.js',
+                'js/db.js',
+                'css/styles.css',
+                'Gemini Test_2409.html'
+            ];
+
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    if (response.ok) {
+                        log(`✓ ${file} - OK`, 'success');
+                    } else {
+                        log(`✗ ${file} - Status ${response.status}`, 'error');
+                    }
+                } catch (e) {
+                    log(`✗ ${file} - ${e.message}`, 'error');
+                }
+            }
+        }
+
+        log('Debug console initialized', 'success');
+    </script>
+</body>
+</html>

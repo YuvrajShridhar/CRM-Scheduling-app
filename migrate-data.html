@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Data Migration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #progress { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Firebase Data Migration</h1>
+    <p>This will copy all data from the OLD Firebase to your NEW Firebase.</p>
+    
+    <button id="migrateBtn" onclick="migrateData()">Start Migration</button>
+    
+    <div id="progress"></div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore, collection, getDocs, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        // OLD Firebase Config (PFSN)
+        const oldConfig = {
+            apiKey: "AIzaSyAliOzv31xL-bJeEFOv59Ddo5-khmZrtDA",
+            authDomain: "pfsn---team-schedule.firebaseapp.com",
+            projectId: "pfsn---team-schedule",
+            storageBucket: "pfsn---team-schedule.appspot.com",
+            messagingSenderId: "1057905526574",
+            appId: "1:1057905526574:web:635b6fed7831624bd8dcbf"
+        };
+
+        // NEW Firebase Config (Your personal project)
+        const newConfig = {
+            apiKey: "AIzaSyAmALPaK8xqZceYwqX_koSnoGnkX8PjN-4",
+            authDomain: "crm-scheduling-app.firebaseapp.com",
+            projectId: "crm-scheduling-app",
+            storageBucket: "crm-scheduling-app.firebasestorage.app",
+            messagingSenderId: "716913774330",
+            appId: "1:716913774330:web:e05002463c75277ace0343"
+        };
+
+        const oldApp = initializeApp(oldConfig, 'old');
+        const newApp = initializeApp(newConfig, 'new');
+        
+        const oldDb = getFirestore(oldApp);
+        const newDb = getFirestore(newApp);
+
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            document.getElementById('progress').appendChild(div);
+            console.log(message);
+        }
+
+        async function migrateCollection(collectionName) {
+            try {
+                log(`📦 Migrating collection: ${collectionName}...`, 'info');
+                
+                const snapshot = await getDocs(collection(oldDb, collectionName));
+                let count = 0;
+                
+                for (const docSnap of snapshot.docs) {
+                    const data = docSnap.data();
+                    await setDoc(doc(newDb, collectionName, docSnap.id), data);
+                    count++;
+                }
+                
+                log(`✅ Migrated ${count} documents from ${collectionName}`, 'success');
+                return count;
+            } catch (error) {
+                log(`❌ Error migrating ${collectionName}: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        window.migrateData = async function() {
+            const btn = document.getElementById('migrateBtn');
+            btn.disabled = true;
+            document.getElementById('progress').innerHTML = '';
+            
+            try {
+                log('🚀 Starting migration...', 'info');
+                
+                const collections = ['jobs', 'engineers', 'absences', 'settings', 'quotes'];
+                let totalDocs = 0;
+                
+                for (const collectionName of collections) {
+                    const count = await migrateCollection(collectionName);
+                    totalDocs += count;
+                }
+                
+                log(`🎉 Migration complete! Migrated ${totalDocs} total documents.`, 'success');
+                log('✅ You can now close this page and use your app with the new Firebase.', 'success');
+            } catch (error) {
+                log(`❌ Migration failed: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>

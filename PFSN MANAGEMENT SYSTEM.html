@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFS Network Ltd - Team Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        #setupModal { display: none; }
+        .setup-content { background: white; padding: 40px; border-radius: 8px; max-width: 600px; }
+        .setup-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f4f6; border-top: 3px solid #dc2626; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .status-ok { color: green; }
+        .status-error { color: red; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Setup Modal (shown only on first load from file://) -->
+    <div id="setupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="setup-content">
+            <h2 class="text-2xl font-bold mb-4">Starting PFSN Management System...</h2>
+            <p class="text-gray-600 mb-4">Initializing local server for first-time use.</p>
+            <p class="mb-4">
+                <span class="setup-spinner"></span>
+                <span id="setupStatus" class="ml-3">Checking setup...</span>
+            </p>
+            <div id="setupInfo" class="text-sm text-gray-500 hidden">
+                <p class="mb-2">If this doesn't auto-redirect in 5 seconds:</p>
+                <ol class="list-decimal list-inside space-y-1">
+                    <li>Open PowerShell in this folder</li>
+                    <li>Run: <code class="bg-gray-100 px-2 py-1">python -m http.server 8000</code></li>
+                    <li>Visit: <code class="bg-gray-100 px-2 py-1">http://localhost:8000</code></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50 hidden">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-red-600"></div>
+    </div>
+    
+    <!-- Global Header (Shared across all pages) -->
+    <div class="bg-white border-b-2 border-gray-300">
+        <div class="p-4 md:p-6">
+            <!-- Top Section: Logo, Title, Settings -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <img id="logoToHome" src="https://cdn.prod.website-files.com/5f981d49ca231a918581264f/67f38a116a2ff4320163d4b4_PFS_Network_Logo_Upscaled-p-500.webp" alt="PFS Network Ltd Logo" class="h-16 w-auto cursor-pointer" title="Back to Dashboard">
+                    <h1 id="mainTitle" class="text-3xl font-bold text-gray-800">PFS Network Ltd Management System</h1>
+                </div>
+                <button id="settingsBtn" class="text-gray-600 hover:text-gray-900 text-2xl p-3 rounded hover:bg-gray-200"><i class="fas fa-cog"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Homepage -->
+    <div id="homePage" class="p-4 md:p-6 hidden">
+        <div class="mb-8">
+            <p class="text-gray-600 text-lg">Welcome! Select a section below to get started.</p>
+        </div>
+
+        <!-- Main Section Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Operations -->
+            <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navOperationsBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-calendar-alt text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Operations</h2>
+                </div>
+                <p class="text-purple-100">Team scheduling, job management, and forecasting</p>
+            </div>
+
+            <!-- Sales -->
+            <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navSalesBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-handshake text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Sales</h2>
+                </div>
+                <p class="text-red-100">Quotations and client management</p>
+            </div>
+
+            <!-- Finance -->
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navFinanceBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-pound-sign text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Finance</h2>
+                </div>
+                <p class="text-blue-100">Invoicing, SAGE integration, and financial reports</p>
+            </div>
+
+            <!-- Purchasing -->
+            <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navPurchasingBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-shopping-cart text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Purchasing</h2>
+                </div>
+                <p class="text-green-100">Purchase orders and supplier management</p>
+            </div>
+
+            <!-- Warehouse -->
+            <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navWarehouseBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-warehouse text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Warehouse</h2>
+                </div>
+                <p class="text-orange-100">Stock management and materials tracking</p>
+            </div>
+
+            <!-- Compliance -->
+            <div class="bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navComplianceBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-certificate text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Compliance</h2>
+                </div>
+                <p class="text-teal-100">BMTrada registers and certifications</p>
+            </div>
+
+            <!-- HR / Quality -->
+            <div class="bg-gradient-to-br from-pink-600 to-pink-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navHRBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-users text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">HR / Quality</h2>
+                </div>
+                <p class="text-pink-100">Employee management and quality control</p>
+            </div>
+
+            <!-- Reporting -->
+            <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navReportingBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-chart-bar text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Reporting</h2>
+                </div>
+                <p class="text-indigo-100">Dashboards, analytics, and data exports</p>
+            </div>
+
+            <!-- Settings -->
+            <div class="bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all transform hover:scale-105" id="navSettingsPageBtn">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-cog text-white text-3xl mr-4"></i>
+                    <h2 class="text-2xl font-bold text-white">Settings</h2>
+                </div>
+                <p class="text-gray-100">System configuration and user management</p>
+            </div>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Work In Progress</h3>
+                <div id="homeWIPCount" class="text-4xl font-bold text-purple-600">0</div>
+                <p class="text-sm text-gray-500 mt-2">Active jobs</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Scheduled This Week</h3>
+                <div id="homeScheduledCount" class="text-4xl font-bold text-blue-600">0</div>
+                <p class="text-sm text-gray-500 mt-2">Upcoming jobs</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Pending Quotes</h3>
+                <div id="homePendingQuotesCount" class="text-4xl font-bold text-red-600">0</div>
+                <p class="text-sm text-gray-500 mt-2">Awaiting response</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Pages -->
+    <!-- Operations Section -->
+    <div id="operationsPage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Operations</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="opsNavAddJobBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-plus-circle text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Add Job</h3>
+                </div>
+                <p class="text-purple-100 text-sm">Create a new job or project</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="opsNavTeamScheduleBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-calendar-alt text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Team Schedule</h3>
+                </div>
+                <p class="text-purple-100 text-sm">View and manage engineer schedules</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="opsNavOfficeScheduleBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-building text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Office Schedule</h3>
+                </div>
+                <p class="text-purple-100 text-sm">View and manage office staff schedules</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="opsNavClientsBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-users text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Clients</h3>
+                </div>
+                <p class="text-purple-100 text-sm">Manage client database and relationships</p>
+            </div>
+        </div>
+        <!-- Jobs Panels -->
+        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Pending / Uncompleted Jobs -->
+            <div class="lg:col-span-1 bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Pending Jobs</h3>
+                <div id="opsPendingJobsList" class="space-y-3 max-h-[60vh] overflow-y-auto"></div>
+            </div>
+
+            <!-- All Jobs with Filters -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-700">All Jobs</h3>
+                    <div class="flex gap-2">
+                        <input id="opsJobsSearch" type="text" placeholder="Search company, site or notes..." class="border-2 border-gray-300 rounded px-3 py-2 w-64">
+                        <select id="opsJobsStatusFilter" class="border-2 border-gray-300 rounded px-3 py-2">
+                            <option value="">All Statuses</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="unscheduled">Unscheduled</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select id="opsJobsCategoryFilter" class="border-2 border-gray-300 rounded px-3 py-2">
+                            <option value="">All Categories</option>
+                        </select>
+                        <button id="opsJobsResetFilters" class="bg-gray-100 border border-gray-300 px-3 py-2 rounded">Reset</button>
+                    </div>
+                </div>
+                <div id="opsAllJobsList" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clients Log Page -->
+    <div id="clientsLogPage" class="p-4 md:p-6 hidden">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Clients</h1>
+            <button id="addClientBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 shadow-lg">
+                <i class="fas fa-plus mr-2"></i>Add Client
+            </button>
+        </div>
+        <div id="clientsLogContainer" class="space-y-4"></div>
+    </div>
+
+    <!-- Individual Client Page -->
+    <div id="clientPage" class="p-4 md:p-6 hidden">
+        <div class="mb-6">
+            <button id="backToClientsBtn" class="text-blue-600 hover:text-blue-800 mb-3">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Clients
+            </button>
+            <h1 id="clientPageName" class="text-3xl font-bold text-gray-800"></h1>
+        </div>
+
+        <!-- Client Tabs -->
+        <div class="bg-white rounded-lg shadow mb-4">
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-4 px-6 py-3">
+                    <button id="clientTabDetails" class="px-4 py-2 border-b-2 border-red-500 text-red-600 font-medium">Details</button>
+                    <button id="clientTabFinance" class="px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-800">Finance</button>
+                    <button id="clientTabScheduled" class="px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-800">Scheduled Services</button>
+                    <button id="clientTabActivity" class="px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-800">Activity Log</button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Tab Content Areas -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column - Tab Content -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+                <div id="clientDetailsTab"></div>
+                <div id="clientFinanceTab" class="hidden"></div>
+                <div id="clientScheduledServicesTab" class="hidden"></div>
+                <div id="clientActivityTab" class="hidden"></div>
+            </div>
+
+            <!-- Right Column - Jobs -->
+            <div class="lg:col-span-1 bg-white rounded-lg shadow p-6">
+                <div id="clientJobsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Team Schedule View -->
+    <div id="teamSchedulePage" class="hidden">
+        <div class="p-4 md:p-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <!-- Single row: Title, Date Controls, and View Toggle -->
+                <div class="flex items-center justify-between gap-6">
+                    <h1 class="text-3xl font-bold text-gray-800 whitespace-nowrap">Team Schedule</h1>
+                    
+                    <!-- Date Controls -->
+                    <div id="dateControls" class="flex items-center gap-2">
+                        <button id="prevBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button>
+                        <span id="currentDateRange" class="min-w-48 text-center font-bold text-gray-800"></span>
+                        <button id="nextBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <!-- Week/Month Toggle -->
+                    <div class="flex gap-2">
+                        <button id="scheduleWeekViewBtn" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 whitespace-nowrap">Week View</button>
+                        <button id="scheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Office Schedule View -->
+    <div id="officeSchedulePage" class="hidden">
+        <div class="p-4 md:p-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <!-- Single row: Title, Date Controls, and View Toggle -->
+                <div class="flex items-center justify-between gap-6">
+                    <h1 class="text-3xl font-bold text-gray-800 whitespace-nowrap">Office Schedule</h1>
+                    
+                    <!-- Date Controls -->
+                    <div id="officeDateControls" class="flex items-center gap-2">
+                        <button id="officePrevBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button>
+                        <span id="officeCurrentDateRange" class="min-w-48 text-center font-bold text-gray-800"></span>
+                        <button id="officeNextBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <!-- Week/Month Toggle -->
+                    <div class="flex gap-2">
+                        <button id="officeScheduleWeekViewBtn" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 whitespace-nowrap">Week View</button>
+                        <button id="officeScheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Office Schedule Board (shares scheduleBoard from schedulerPage when active) -->
+        </div>
+    </div>
+
+    <!-- Sales Section -->
+    <div id="salesPage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Sales</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="salesNavQuotationsBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-file-invoice text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Quotations</h3>
+                </div>
+                <p class="text-red-100 text-sm">Manage quotes and proposals</p>
+            </div>
+            <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="salesNavClientsBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-users text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Clients</h3>
+                </div>
+                <p class="text-red-100 text-sm">Client information and financials</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Finance Section -->
+    <div id="financePage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Finance</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="financeNavForecastBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-chart-line text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Financial Forecast</h3>
+                </div>
+                <p class="text-blue-100 text-sm">Revenue forecasts and analytics</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-file-invoice-dollar text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Invoicing</h3>
+                </div>
+                <p class="text-blue-100 text-sm">Coming soon</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-calendar-alt text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Aged Debt</h3>
+                </div>
+                <p class="text-blue-100 text-sm">Coming soon</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-file-pdf text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Statement of Account</h3>
+                </div>
+                <p class="text-blue-100 text-sm">Coming soon - PDF generation for parent clients</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-sync text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">SAGE Integration</h3>
+                </div>
+                <p class="text-blue-100 text-sm">Coming soon</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchasing Section -->
+    <div id="purchasingPage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Purchasing</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="purchasingNavPOsBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-shopping-cart text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Purchase Orders</h3>
+                </div>
+                <p class="text-green-100 text-sm">Manage purchase orders</p>
+            </div>
+            <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="purchasingNavSuppliersBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-truck text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Suppliers</h3>
+                </div>
+                <p class="text-green-100 text-sm">Manage suppliers</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Orders Page -->
+    <div id="purchaseOrdersPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <button id="backFromPOsBtn" class="text-green-600 hover:text-green-700 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Purchasing
+            </button>
+            <button id="createPOBtn" class="bg-green-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-green-700 transition shadow-md hover:shadow-lg">
+                <i class="fas fa-plus mr-2"></i>Create Purchase Order
+            </button>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-600">Open POs</h3>
+                    <i class="fas fa-file-invoice text-green-500 text-xl"></i>
+                </div>
+                <p id="poMetricOpen" class="text-3xl font-bold text-gray-800">0</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-600">Total Value</h3>
+                    <i class="fas fa-pound-sign text-green-500 text-xl"></i>
+                </div>
+                <p id="poMetricValue" class="text-3xl font-bold text-gray-800">£0</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-600">Awaiting Delivery</h3>
+                    <i class="fas fa-truck-loading text-orange-500 text-xl"></i>
+                </div>
+                <p id="poMetricAwaiting" class="text-3xl font-bold text-gray-800">0</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-600">This Month</h3>
+                    <i class="fas fa-calendar-alt text-blue-500 text-xl"></i>
+                </div>
+                <p id="poMetricMonth" class="text-3xl font-bold text-gray-800">£0</p>
+            </div>
+        </div>
+
+        <!-- PO Lists -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="border-b">
+                <div class="flex space-x-1 p-2">
+                    <button id="openPOsTab" class="px-4 py-2 text-sm font-medium text-green-600 border-b-2 border-green-600">
+                        Open POs
+                    </button>
+                    <button id="allPOsTab" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">
+                        All POs
+                    </button>
+                </div>
+            </div>
+            <div id="openPOsContent" class="p-6">
+                <div id="openPOsList"></div>
+            </div>
+            <div id="allPOsContent" class="p-6 hidden">
+                <div class="mb-4 flex gap-4">
+                    <select id="poFilterStatus" class="border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+                        <option value="">All Statuses</option>
+                        <option value="sent">Sent</option>
+                        <option value="acknowledged">Acknowledged</option>
+                        <option value="partially-delivered">Partially Delivered</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="closed">Closed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select id="poFilterSupplier" class="border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+                        <option value="">All Suppliers</option>
+                    </select>
+                </div>
+                <div id="allPOsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suppliers Log Page -->
+    <div id="suppliersLogPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <button id="backFromSuppliersBtn" class="text-green-600 hover:text-green-700 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Purchasing
+            </button>
+            <button id="createSupplierBtn" class="bg-green-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-green-700 transition shadow-md hover:shadow-lg">
+                <i class="fas fa-plus mr-2"></i>Add Supplier
+            </button>
+        </div>
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">All Suppliers</h2>
+                <div id="suppliersLog"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier Detail Page -->
+    <div id="supplierPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <button id="backFromSupplierBtn" class="text-green-600 hover:text-green-700 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Suppliers
+            </button>
+            <div class="flex gap-2">
+                <button id="editSupplierBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition shadow-md hover:shadow-lg">
+                    <i class="fas fa-edit mr-2"></i>Edit
+                </button>
+                <button id="deleteSupplierBtn" class="bg-red-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-red-700 transition shadow-md hover:shadow-lg">
+                    <i class="fas fa-trash mr-2"></i>Delete
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6">
+                <h1 id="supplierPageName" class="text-3xl font-bold text-gray-800 mb-6"></h1>
+                <div id="supplierDetailsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warehouse Section -->
+    <div id="warehousePage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Warehouse</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-boxes text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Stock Management</h3>
+                </div>
+                <p class="text-orange-100 text-sm">Coming soon</p>
+            </div>
+            <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-dolly text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Materials on Jobs</h3>
+                </div>
+                <p class="text-orange-100 text-sm">Coming soon</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compliance Section -->
+    <div id="compliancePage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Compliance</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="complianceNavFireDoorsBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-door-closed text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Fire Doors</h3>
+                </div>
+                <p class="text-teal-100 text-sm">BMTrada approved installers/maintainers</p>
+            </div>
+            <div class="bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="complianceNavFireStoppingBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-fire-extinguisher text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Fire Stopping</h3>
+                </div>
+                <p class="text-teal-100 text-sm">BMTrada approved installers/maintainers</p>
+            </div>
+            <div class="bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="complianceNavRegistersBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-clipboard-list text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">BMTrada Registers</h3>
+                </div>
+                <p class="text-teal-100 text-sm">Localised & centralised fire door registers</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fire Doors Compliance Page -->
+    <div id="fireDoorsPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-4">
+                <button id="backFromFireDoorsBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Compliance</span>
+                </button>
+                <h1 class="text-3xl font-bold text-gray-800">Fire Doors - BMTrada Accreditation</h1>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="bg-teal-100 rounded-full p-4">
+                    <i class="fas fa-certificate text-teal-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">BMTrada Approved Installer/Maintainer</h2>
+                    <p class="text-gray-600 mb-4">PFS Network Ltd is an approved BMTrada installer and maintainer for fire door sets. Our approved persons are certified to install and maintain fire door assemblies in accordance with BMTrada standards.</p>
+                </div>
+            </div>
+
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Approved Persons</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-user-check text-teal-600 text-xl"></i>
+                            <h4 class="font-semibold text-gray-800">View Approved Persons List</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Current list of BMTrada approved installers and maintainers</p>
+                        <button class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 text-sm">
+                            <i class="fas fa-file-pdf mr-2"></i>View Certificate
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Accreditation Documents</h3>
+                <div class="border rounded-lg p-4">
+                    <p class="text-gray-600 mb-4">Upload and manage BMTrada accreditation certificates and related documentation</p>
+                    <div class="flex gap-3">
+                        <button class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">
+                            <i class="fas fa-upload mr-2"></i>Upload Document
+                        </button>
+                        <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                            <i class="fas fa-folder mr-2"></i>View All Documents
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fire Stopping Compliance Page -->
+    <div id="fireStoppingPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-4">
+                <button id="backFromFireStoppingBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Compliance</span>
+                </button>
+                <h1 class="text-3xl font-bold text-gray-800">Fire Stopping - BMTrada Accreditation</h1>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="bg-teal-100 rounded-full p-4">
+                    <i class="fas fa-certificate text-teal-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">BMTrada Approved Installer/Maintainer</h2>
+                    <p class="text-gray-600 mb-4">PFS Network Ltd is an approved BMTrada installer and maintainer for fire stopping systems. Our approved persons are certified to install and maintain fire stopping in accordance with BMTrada standards.</p>
+                </div>
+            </div>
+
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Approved Persons</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-user-check text-teal-600 text-xl"></i>
+                            <h4 class="font-semibold text-gray-800">View Approved Persons List</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">Current list of BMTrada approved installers and maintainers</p>
+                        <button class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 text-sm">
+                            <i class="fas fa-file-pdf mr-2"></i>View Certificate
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Accreditation Documents</h3>
+                <div class="border rounded-lg p-4">
+                    <p class="text-gray-600 mb-4">Upload and manage BMTrada accreditation certificates and related documentation</p>
+                    <div class="flex gap-3">
+                        <button class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">
+                            <i class="fas fa-upload mr-2"></i>Upload Document
+                        </button>
+                        <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                            <i class="fas fa-folder mr-2"></i>View All Documents
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BMTrada Registers Page -->
+    <div id="bmtradaRegistersPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-4">
+                <button id="backFromBMTradaRegistersBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Compliance</span>
+                </button>
+                <h1 class="text-3xl font-bold text-gray-800">BMTrada Registers</h1>
+            </div>
+            <button class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700">
+                <i class="fas fa-upload mr-2"></i>Import from Door App
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Localised Registers -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-map-marker-alt text-teal-600 text-2xl"></i>
+                        <h2 class="text-xl font-bold text-gray-800">Localised Registers</h2>
+                    </div>
+                    <button class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700 text-sm">
+                        <i class="fas fa-plus mr-1"></i>New
+                    </button>
+                </div>
+                <p class="text-gray-600 mb-4">Fire door installation and maintenance registers for specific sites/locations</p>
+                
+                <div class="border-t pt-4">
+                    <div class="flex gap-3 mb-4">
+                        <button class="flex-1 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">
+                            <i class="fas fa-wrench mr-2"></i>Installation
+                        </button>
+                        <button class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                            <i class="fas fa-tools mr-2"></i>Maintenance
+                        </button>
+                    </div>
+                    
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-clipboard-list text-6xl mb-4 opacity-30"></i>
+                        <p>No localised registers yet</p>
+                        <p class="text-sm mt-2">Import from Door App or create manually</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Centralised Registers -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-building text-teal-600 text-2xl"></i>
+                        <h2 class="text-xl font-bold text-gray-800">Centralised Registers</h2>
+                    </div>
+                    <button class="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700 text-sm">
+                        <i class="fas fa-plus mr-1"></i>New
+                    </button>
+                </div>
+                <p class="text-gray-600 mb-4">Master fire door installation and maintenance registers across all sites</p>
+                
+                <div class="border-t pt-4">
+                    <div class="flex gap-3 mb-4">
+                        <button class="flex-1 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">
+                            <i class="fas fa-wrench mr-2"></i>Installation
+                        </button>
+                        <button class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                            <i class="fas fa-tools mr-2"></i>Maintenance
+                        </button>
+                    </div>
+                    
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-clipboard-list text-6xl mb-4 opacity-30"></i>
+                        <p>No centralised registers yet</p>
+                        <p class="text-sm mt-2">Import from Door App or create manually</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Info -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 text-xl mt-1"></i>
+                <div>
+                    <h3 class="font-semibold text-blue-900 mb-2">Door App Integration</h3>
+                    <p class="text-blue-800 text-sm">You can import registers directly from your existing Door App, or link to the Door App for live data synchronization. Choose "Import" for a one-time upload or configure integration settings for automatic sync.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HR / Quality Section -->
+    <div id="hrPage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">HR / Quality</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-pink-600 to-pink-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="hrNavAddAbsenceBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-user-times text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Add Absence</h3>
+                </div>
+                <p class="text-pink-100 text-sm">Record engineer absences and holidays</p>
+            </div>
+            <div class="bg-gradient-to-br from-pink-600 to-pink-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="hrNavEmployeesBtn">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-user-tie text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Employee Records</h3>
+                </div>
+                <p class="text-pink-100 text-sm">Manage employee information and certifications</p>
+            </div>
+            <div class="bg-gradient-to-br from-pink-600 to-pink-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-clipboard-check text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Quality Control</h3>
+                </div>
+                <p class="text-pink-100 text-sm">Coming soon</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Records Page -->
+    <div id="employeesPage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-4">
+                <button id="backFromEmployeesBtn" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to HR</span>
+                </button>
+                <h1 class="text-3xl font-bold text-gray-800">Employee Records</h1>
+            </div>
+            <button id="addEmployeeBtn" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
+                <i class="fas fa-user-plus mr-2"></i>Add Employee
+            </button>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input type="text" id="employeeSearch" placeholder="Search employees..." class="border-2 border-gray-300 rounded-lg px-4 py-2">
+                <select id="employeeTypeFilter" class="border-2 border-gray-300 rounded-lg px-4 py-2">
+                    <option value="">All Types</option>
+                    <option value="employee">Employee</option>
+                    <option value="subcontractor">Subcontractor</option>
+                </select>
+                <select id="employeeRoleFilter" class="border-2 border-gray-300 rounded-lg px-4 py-2">
+                    <option value="">All Roles</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="office">Office Staff</option>
+                    <option value="management">Management</option>
+                </select>
+                <button id="employeeResetFilters" class="bg-gray-100 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-200">Reset</button>
+            </div>
+        </div>
+
+        <!-- Employee List -->
+        <div id="employeesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Will be populated dynamically -->
+            <div class="text-center py-12 text-gray-500 col-span-full">
+                <i class="fas fa-users text-6xl mb-4 opacity-30"></i>
+                <p class="text-lg font-medium">No employees found</p>
+                <p class="text-sm mt-2">Add your first employee to get started</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Individual Employee Page -->
+    <div id="employeePage" class="p-4 md:p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-4">
+                <button id="backFromEmployeeBtn" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Employees</span>
+                </button>
+                <h1 id="employeePageName" class="text-3xl font-bold text-gray-800">Employee Details</h1>
+            </div>
+            <div class="flex gap-2">
+                <button id="editEmployeeBtn" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
+                    <i class="fas fa-edit mr-2"></i>Edit
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Employee Info Card -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <div class="text-center mb-6">
+                        <div class="w-24 h-24 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-user text-pink-600 text-4xl"></i>
+                        </div>
+                        <h2 id="employeeDetailName" class="text-2xl font-bold text-gray-800 mb-1">-</h2>
+                        <p id="employeeDetailRole" class="text-gray-600 mb-2">-</p>
+                        <span id="employeeDetailType" class="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-pink-100 text-pink-700">-</span>
+                    </div>
+                    
+                    <div class="border-t pt-4 space-y-3">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Email</p>
+                            <p id="employeeDetailEmail" class="text-sm text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Phone</p>
+                            <p id="employeeDetailPhone" class="text-sm text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Address</p>
+                            <p id="employeeDetailAddress" class="text-sm text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Start Date</p>
+                            <p id="employeeDetailStartDate" class="text-sm text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Emergency Contact</p>
+                            <p id="employeeDetailEmergencyContact" class="text-sm text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Emergency Phone</p>
+                            <p id="employeeDetailEmergencyPhone" class="text-sm text-gray-800">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">Certifications & Qualifications</h3>
+                        <button id="addCertificationBtn" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 text-sm">
+                            <i class="fas fa-plus mr-2"></i>Add Certification
+                        </button>
+                    </div>
+
+                    <div id="certificationsContainer">
+                        <!-- Certifications will be loaded here -->
+                        <div class="text-center py-12 text-gray-500">
+                            <i class="fas fa-certificate text-6xl mb-4 opacity-30"></i>
+                            <p>No certifications recorded</p>
+                            <p class="text-sm mt-2">Add certifications to track expiry dates</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reporting Section -->
+    <div id="reportingPage" class="p-4 md:p-6 hidden">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Reporting</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-chart-bar text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Dashboards</h3>
+                </div>
+                <p class="text-pink-100 text-sm">Coming soon</p>
+            </div>
+            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-download text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Data Exports</h3>
+                </div>
+                <p class="text-pink-100 text-sm">Coming soon</p>
+            </div>
+            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-chart-pie text-white text-2xl mr-3"></i>
+                    <h3 class="text-xl font-bold text-white">Analytics</h3>
+                </div>
+                <p class="text-pink-100 text-sm">Coming soon</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Page Container (OLD - keep for backward compatibility) -->
+    <div id="landingPage" class="p-4 md:p-6 hidden">
+        
+        <main>
+             <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Work In Progress</h2>
+             <div id="wipJobsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+             </div>
+             <div id="noWipJobs" class="text-gray-600 text-center py-8 hidden">No jobs currently in progress</div>
+             <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Unscheduled Jobs</h2>
+             <div id="unscheduledJobsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+             </div>
+             <div id="noUnscheduledJobs" class="text-gray-600 text-center py-8 hidden">No unscheduled jobs</div>
+        </main>
+    </div>
+
+
+    <!-- Main App Container -->
+    <div id="schedulerPage" class="p-4 md:p-6 hidden">
+
+        <!-- Hidden view buttons (for internal use) -->
+        <button id="weekViewBtn" style="display:none;"></button>
+        <button id="monthViewBtn" style="display:none;"></button>
+        <button id="forecastViewBtn" style="display:none;"></button>
+        <button id="clientInfoViewBtn" style="display:none;"></button>
+
+        <!-- Schedule Board -->
+        <div id="scheduleBoard" class="bg-white rounded-lg shadow p-6 relative">
+            <!-- Horizontal Scroll Slider -->
+            <div id="scheduleSlider" class="border-b border-gray-300" style="display: none !important; overflow-x: auto; overflow-y: hidden; padding: 4px 0;">
+                <div id="sliderContent" style="height: 1px;"></div>
+            </div>
+            <div class="flex">
+                <div id="scheduleGrid">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Forecast Chart Container -->
+        <div id="forecastContainer" class="bg-white rounded-lg shadow p-6 hidden">
+             <div class="forecast-outer-container">
+                <table id="forecastTable" class="forecast-table">
+                </table>
+            </div>
+            <div id="forecastChartsContainer" class="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h3 class="text-lg font-semibold mb-4 text-gray-700">Monthly Financial Overview</h3>
+                <div style="width:100%; height:300px; position:relative;">
+                    <canvas id="monthlyForecastChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Client Info Container -->
+        <div id="clientInfoPage" class="bg-white rounded-lg shadow p-6 hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-4">Client Financial Overview</h2>
+            
+            <!-- Financial Totals -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div class="text-sm font-medium text-blue-600">Invoiced This Month</div>
+                    <div id="invoicedThisMonth" class="text-3xl font-bold text-blue-900">£0.00</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div class="text-sm font-medium text-green-600">Expected Next Month</div>
+                    <div id="expectedNextMonth" class="text-3xl font-bold text-green-900">£0.00</div>
+                </div>
+            </div>
+            
+            <!-- Filters Row -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Client</label>
+                    <select id="clientSelector" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Work Type</label>
+                    <select id="clientWorkTypeFilter" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        <option value="">-- All Work Types --</option>
+                        <option value="FD">Fire Doors (FD)</option>
+                        <option value="FS">Fire Stopping (FS)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Category</label>
+                    <select id="clientCategoryFilter" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        <option value="">-- All Categories --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Date Range</label>
+                    <select id="clientDateFilter" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                        <option value="">-- All Time --</option>
+                        <option value="past-month">Past Month</option>
+                        <option value="past-year">Past Year</option>
+                    </select>
+                </div>
+            </div>
+            <div id="clientJobsContainer" class="overflow-x-auto mb-8">
+            </div>
+            <div id="clientChartContainer" class="p-4 bg-gray-50 rounded-lg">
+                <h3 class="text-lg font-semibold mb-4 text-gray-700">Filtered Monthly Totals</h3>
+                <div style="width:100%; height:300px; position:relative;">
+                    <canvas id="clientFinancialChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quotations Page -->
+        <div id="quotationsPage" class="bg-white rounded-lg shadow p-6 hidden">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Quotations Log</h2>
+                <button id="addQuoteBtn" class="px-4 py-2 bg-red-600 text-white font-bold rounded hover:bg-red-700">
+                    <i class="fas fa-plus mr-2"></i>Add Quote
+                </button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
+                    <select id="filterQuoteStatus" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500">
+                        <option value="">-- All Statuses --</option>
+                        <option value="Awaiting">Awaiting</option>
+                        <option value="At Risk">At Risk</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Won">Won</option>
+                        <option value="Superseded">Superseded</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Account Manager</label>
+                    <select id="filterQuoteManager" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500">
+                        <option value="">-- All Managers --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Company</label>
+                    <input type="text" id="filterQuoteCompany" placeholder="Search company..." class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Date Range</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="date" id="filterQuoteDateFrom" class="border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500">
+                        <input type="date" id="filterQuoteDateTo" class="border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-red-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quotes Table -->
+            <div class="overflow-x-auto">
+                <table id="quotesTable" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 border-b-2 border-gray-300">
+                            <th class="text-left p-3 font-semibold text-gray-700">Quote No.</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Date</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Company</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Site</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Account Manager</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Value</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Status</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Projected Close</th>
+                            <th class="text-left p-3 font-semibold text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotesTableBody">
+                        <!-- Quotes will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noQuotes" class="text-gray-600 text-center py-8 hidden">No quotes found</div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Job Modal -->
+    <div id="jobModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 modal-content transform scale-show max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="jobModalTitle" class="text-2xl font-bold text-white">Add New Job</h2>
+                <button type="button" id="closeJobModalBtn" class="text-white hover:text-gray-200 transition" title="Close">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            
+            <form id="jobForm" class="p-8 overflow-y-auto">
+                <input type="hidden" id="jobId">
+                
+                <!-- Job Details Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Job Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Company <span class="text-red-500">*</span></label>
+                            <input id="jobCompany" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Site <span class="text-red-500">*</span></label>
+                            <input id="jobSite" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" required />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Job Number</label>
+                            <input id="jobNo" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Financial</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Cost (£)</label>
+                            <input id="jobCost" type="number" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition currency-input" step="0.01" min="0" placeholder="0.00" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">PO Number</label>
+                            <input id="jobPO" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Category <span class="text-red-500">*</span></label>
+                            <select id="jobCategory" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" required></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scheduling Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Scheduling</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Start Date</label>
+                            <input id="jobStartDate" type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">End Date</label>
+                            <input id="jobEndDate" type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Assigned Engineers</label>
+                        <select id="jobEngineers" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" multiple size="6"></select>
+                    </div>
+                </div>
+
+                <!-- Status Checkboxes -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Status</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition cursor-pointer">
+                            <input id="jobIsScheduled" type="checkbox" class="w-5 h-5 text-red-600 rounded focus:ring-red-500" />
+                            <span class="text-sm font-medium text-gray-700">Scheduled</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition cursor-pointer">
+                            <input id="jobAllowWeekendWork" type="checkbox" class="w-5 h-5 text-red-600 rounded focus:ring-red-500" />
+                            <span class="text-sm font-medium text-gray-700">Weekend Work</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition cursor-pointer">
+                            <input id="jobIsProject" type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                            <span class="text-sm font-medium text-gray-700">Project</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition cursor-pointer">
+                            <input id="jobIsAppointmentBased" type="checkbox" class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500" />
+                            <span class="text-sm font-medium text-gray-700">Appointment-Based</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition cursor-pointer">
+                            <input id="jobIsCompleted" type="checkbox" class="w-5 h-5 text-green-600 rounded focus:ring-green-500" />
+                            <span class="text-sm font-medium text-gray-700">Completed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Appointment-Based Section (shown when Appointment-Based is checked) -->
+                <div id="appointmentsSection" class="mb-8 hidden">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-purple-200">Appointments Schedule</h3>
+                    <p class="text-sm text-gray-600 mb-4">Add individual appointment dates for this job. Each appointment can have multiple engineers assigned.</p>
+                    <div id="appointmentsList" class="space-y-3 mb-4">
+                        <!-- Appointments will be added here dynamically -->
+                    </div>
+                    <div class="flex items-center space-x-3 bg-gray-50 p-4 rounded-lg">
+                        <div class="flex-grow">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Appointment Date</label>
+                            <input type="date" id="appointmentDate" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-500">
+                        </div>
+                        <div class="flex-grow">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Engineer(s)</label>
+                            <select id="appointmentEngineers" multiple size="3" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-500">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="flex-grow">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Location/Notes</label>
+                            <input type="text" id="appointmentNotes" placeholder="e.g., Flat 3, Building A" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-500">
+                        </div>
+                        <div class="flex-grow">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select id="appointmentStatus" class="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-purple-500">
+                                <option value="pending">Pending</option>
+                                <option value="scheduled" selected>Scheduled</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" id="addAppointmentBtn" class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-medium transition shadow-md hover:shadow-lg whitespace-nowrap">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Applications Section (shown when Project is checked) -->
+                <div id="applicationsSection" class="mb-8 hidden">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-blue-200">Project Applications</h3>
+                    <div id="applicationsList" class="space-y-3 mb-4">
+                        <!-- Applications will be added here dynamically -->
+                    </div>
+                    <button type="button" id="addApplicationBtn" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition shadow-md hover:shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>Add Application</span>
+                    </button>
+                </div>
+
+                <!-- Daily Exceptions Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3 pb-2 border-b-2 border-orange-200">Daily Exceptions</h3>
+                    <p class="text-sm text-gray-600 mb-4">Mark specific days when engineers won't be on site for this job</p>
+                    <div id="dailyExceptionsList" class="space-y-2 mb-4 max-h-40 overflow-y-auto">
+                        <!-- Daily exceptions will be added here -->
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <select id="exceptionDate" class="flex-grow border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-500">
+                            <option value="">Select Date</option>
+                        </select>
+                        <select id="exceptionEngineer" class="flex-grow border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-orange-500">
+                            <option value="">Select Engineer</option>
+                        </select>
+                        <button type="button" id="addExceptionBtn" class="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-medium transition">Add</button>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b-2 border-gray-200">Notes</h3>
+                    <div id="notesList" class="max-h-40 overflow-y-auto bg-gray-50 p-4 rounded-lg border-2 border-gray-200 mb-3 space-y-2"></div>
+                    <div class="flex items-start space-x-3">
+                        <textarea id="newJobNote" rows="3" class="flex-grow border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition" placeholder="Add a note..."></textarea>
+                        <button type="button" id="addNoteBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg">Add</button>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 border-t-2 border-gray-200 pt-6 mt-6">
+                    <button type="button" id="cancelJobBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-lg font-medium transition">Cancel</button>
+                    <button type="button" id="deleteJobBtn" class="bg-red-100 hover:bg-red-200 text-red-700 py-3 px-6 rounded-lg font-medium transition hidden">Delete</button>
+                    <button type="button" id="completeJobBtn" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg hidden">Mark Complete</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg">Save Job</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Engineer Modal -->
+    <div id="engineerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md mx-4 modal-content transform scale-show">
+            <h2 id="engineerModalTitle" class="text-2xl font-bold mb-6">Add New Engineer</h2>
+            <form id="engineerForm">
+                 <input type="hidden" id="engineerId">
+                <div class="mb-4">
+                    <label for="engineerName" class="block text-sm font-medium text-gray-700">Engineer Name</label>
+                    <input type="text" id="engineerName" class="mt-1 block w-full border rounded px-2 py-1" required>
+                </div>
+                <div class="mb-6">
+                    <label for="engineerType" class="block text-sm font-medium text-gray-700">Specialisation</label>
+                    <select id="engineerType" class="mt-1 block w-full border rounded px-2 py-1" required></select>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancelEngineerBtn" class="bg-gray-200 text-gray-800 py-2 px-4 rounded">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Save Engineer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Absence Modal -->
+    <div id="absenceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md mx-4 modal-content transform scale-show">
+            <h2 id="absenceModalTitle" class="text-2xl font-bold mb-6">Add Absence</h2>
+            <form id="absenceForm">
+                <input type="hidden" id="absenceId">
+                <div class="mb-4">
+                    <label for="absenceEngineer" class="block text-sm font-medium text-gray-700">Engineer</label>
+                    <select id="absenceEngineer" class="mt-1 block w-full border rounded px-2 py-1" required></select>
+                </div>
+                <div class="mb-4">
+                    <label for="absenceType" class="block text-sm font-medium text-gray-700">Type</label>
+                    <select id="absenceType" class="mt-1 block w-full border rounded px-2 py-1" required>
+                        <option value="Holiday">Holiday</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Training">Training</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="absenceStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" id="absenceStartDate" class="mt-1 block w-full border rounded px-2 py-1" required>
+                </div>
+                <div class="mb-4">
+                    <label for="absenceEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
+                    <input type="date" id="absenceEndDate" class="mt-1 block w-full border rounded px-2 py-1" required>
+                </div>
+                <div class="mb-6">
+                    <label for="absenceNotes" class="block text-sm font-medium text-gray-700">Notes (Optional)</label>
+                    <textarea id="absenceNotes" rows="2" class="mt-1 block w-full border rounded px-2 py-1"></textarea>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button type="button" id="deleteAbsenceBtn" class="bg-red-600 text-white py-2 px-4 rounded hidden">Delete</button>
+                    <div class="flex space-x-4 ml-auto">
+                        <button type="button" id="cancelAbsenceBtn" class="bg-gray-200 text-gray-800 py-2 px-4 rounded">Cancel</button>
+                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Client Modal -->
+    <div id="clientModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 modal-content transform scale-show max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="clientModalTitle" class="text-2xl font-bold text-white">Add New Client</h2>
+                <button id="closeClientModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
+
+            <form id="clientForm" class="p-8 overflow-y-auto">
+                <input type="hidden" id="clientId">
+                
+                <!-- Client Type & Number -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Client Number *</label>
+                        <input id="clientNumber" type="text" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500" placeholder="PFS7891">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-3 pt-7">
+                            <input id="clientIsInvoicing" type="checkbox" class="w-5 h-5 text-green-600">
+                            <span class="font-semibold text-gray-700">This is an Invoicing Client (Parent Company)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Parent Selector (hidden unless not invoicing) -->
+                <div id="clientParentSection" class="mb-6 hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Parent / Invoicing Client *</label>
+                    <select id="clientParent" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <option value="">-- Select Parent Company --</option>
+                    </select>
+                </div>
+
+                <!-- Company & Site -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4" id="clientCompanySiteRow">
+                    <div id="clientCompanyNameWrapper">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Company Name *</label>
+                        <input id="clientCompanyName" type="text" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                    </div>
+                    <div id="clientSiteNameWrapper">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Site Name</label>
+                        <input id="clientSiteName" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Client Category</label>
+                    <select id="clientCategory" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <option value="">-- Select Category --</option>
+                        <option value="Fire Authority">Fire Authority</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Public Sector">Public Sector</option>
+                        <option value="Education">Education</option>
+                        <option value="Healthcare">Healthcare</option>
+                    </select>
+                </div>
+
+                <!-- Address -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Site Address</h4>
+                    <div class="grid grid-cols-1 gap-3">
+                        <input id="clientAddress" type="text" placeholder="Street Address" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input id="clientCity" type="text" placeholder="City" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                            <input id="clientPostcode" type="text" placeholder="Postcode" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Address (for invoicing clients) -->
+                <div id="clientBillingSection" class="mb-6 hidden">
+                    <h4 class="font-semibold text-gray-700 mb-3">Billing Address (if different)</h4>
+                    <textarea id="clientBillingAddress" rows="3" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500"></textarea>
+                </div>
+
+                <!-- Contacts -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Primary Contact</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input id="clientContact1Name" type="text" placeholder="Name" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <input id="clientContact1Tel" type="tel" placeholder="Telephone" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <input id="clientContact1Email" type="email" placeholder="Email" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">Secondary Contact</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input id="clientContact2Name" type="text" placeholder="Name" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <input id="clientContact2Tel" type="tel" placeholder="Telephone" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        <input id="clientContact2Email" type="email" placeholder="Email" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                    </div>
+                </div>
+
+                <!-- Finance (for invoicing clients) -->
+                <div id="clientFinanceSection" class="mb-6 hidden">
+                    <h4 class="font-semibold text-gray-700 mb-3">Finance Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Payment Terms</label>
+                            <select id="clientPaymentTerms" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                                <option value="">-- Select --</option>
+                                <option value="7 Days">7 Days</option>
+                                <option value="14 Days">14 Days</option>
+                                <option value="30 Days">30 Days</option>
+                                <option value="60 Days">60 Days</option>
+                                <option value="90 Days">90 Days</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Credit Limit (£)</label>
+                            <input id="clientCreditLimit" type="number" step="0.01" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SharePoint Document Link -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">SharePoint Document Folder Link</label>
+                    <input id="clientDocumentLink" type="url" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500" placeholder="https://panachefireservices.sharepoint.com/sites/PFSNetwork/Client%20Documents/...">
+                    <p class="text-xs text-gray-500 mt-1">Optional: Link to this client's SharePoint folder for easy access to documents</p>
+                </div>
+
+                <!-- Special Instructions -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Special Instructions / Access Codes / On-Site Contacts</label>
+                    <textarea id="clientSpecialInstructions" rows="4" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500" placeholder="Enter any special access requirements, gate codes, parking instructions, or specific people to contact on arrival..."></textarea>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-between items-center pt-6 border-t">
+                    <button type="button" id="deleteClientBtn" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 hidden">
+                        <i class="fas fa-trash mr-2"></i>Delete Client
+                    </button>
+                    <div class="flex space-x-3 ml-auto">
+                        <button type="button" id="cancelClientBtn" class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                        <button type="submit" class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">Save Client</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Supplier Modal -->
+    <div id="supplierModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 modal-content transform scale-show max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="supplierModalTitle" class="text-2xl font-bold text-white">Add New Supplier</h2>
+                <button id="closeSupplierModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
+            <div class="overflow-y-auto p-8 flex-grow">
+                <form id="supplierForm">
+                    <input type="hidden" id="supplierId">
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Company Name *</label>
+                        <input id="supplierCompany" type="text" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Name</label>
+                            <input id="supplierContact" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                            <input id="supplierPhone" type="tel" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                            <input id="supplierEmail" type="email" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
+                            <input id="supplierAccountNumber" type="text" readonly class="w-full border-2 border-green-300 rounded-lg px-4 py-2 bg-green-50 text-green-900 font-semibold">
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Address Line 1</label>
+                        <input id="supplierAddress1" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address Line 2</label>
+                            <input id="supplierAddress2" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address Line 3</label>
+                            <input id="supplierAddress3" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">County</label>
+                            <input id="supplierCounty" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Postcode</label>
+                            <input id="supplierPostcode" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Terms</label>
+                            <select id="supplierPaymentTerms" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                                <option value="">-- Select Terms --</option>
+                                <option value="cash">Cash on Delivery</option>
+                                <option value="7days">7 Days</option>
+                                <option value="14days">14 Days</option>
+                                <option value="30days">30 Days</option>
+                                <option value="60days">60 Days</option>
+                                <option value="90days">90 Days</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center">
+                            <label class="flex items-center cursor-pointer">
+                                <input id="supplierIsActive" type="checkbox" checked class="mr-2 h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                <span class="text-sm font-semibold text-gray-700">Active Supplier</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                        <textarea id="supplierNotes" rows="4" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500" placeholder="Any additional information about this supplier..."></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <button type="button" id="deleteSupplierModalBtn" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 hidden">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                        <div class="flex space-x-3 ml-auto">
+                            <button type="button" id="cancelSupplierBtn" class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">Save Supplier</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Purchase Order Modal -->
+    <div id="poModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl mx-4 modal-content transform scale-show max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="poModalTitle" class="text-2xl font-bold text-white">Create Purchase Order</h2>
+                <button id="closePOModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
+            <div class="overflow-y-auto p-8 flex-grow">
+                <form id="poForm">
+                    <input type="hidden" id="poId">
+
+                    <!-- PO Number (Read-only) -->
+                    <div class="mb-6 bg-green-50 p-4 rounded-lg border-2 border-green-200">
+                        <label class="block text-sm font-medium text-green-900 mb-2">PO Number</label>
+                        <input type="text" id="poNumber" readonly class="w-full border-2 border-green-300 rounded-lg px-4 py-3 bg-green-100 text-green-900 font-bold text-lg">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Supplier *</label>
+                            <div class="flex gap-2">
+                                <select id="poSupplier" required class="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                                    <option value="">-- Select Supplier --</option>
+                                </select>
+                                <button type="button" id="quickAddSupplierBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" title="Quick add supplier">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Link to Job *</label>
+                            <select id="poJob" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                                <option value="">-- Select Open Job --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">PO Date</label>
+                            <input id="poDate" type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
+                            <select id="poStatus" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500">
+                                <option value="sent">Sent</option>
+                                <option value="acknowledged">Acknowledged</option>
+                                <option value="partially-delivered">Partially Delivered</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="closed">Closed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Line Items -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="block text-sm font-semibold text-gray-700">Line Items</label>
+                            <button type="button" id="addLineItemBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
+                                <i class="fas fa-plus mr-2"></i>Add Line
+                            </button>
+                        </div>
+                        <div id="poLineItems" class="space-y-3">
+                            <!-- Line items will be added dynamically -->
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <div class="bg-green-50 p-4 rounded-lg border-2 border-green-200">
+                                <p class="text-sm text-gray-600">Total:</p>
+                                <p id="poTotalAmount" class="text-2xl font-bold text-green-700">£0.00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                        <textarea id="poNotes" rows="3" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-green-500" placeholder="Any additional information..."></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <button type="button" id="deletePOModalBtn" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 hidden">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                        <div class="flex space-x-3 ml-auto">
+                            <button type="button" id="cancelPOBtn" class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">Save PO</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Quote Modal -->
+    <div id="quoteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 modal-content transform scale-show max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="quoteModalTitle" class="text-2xl font-bold text-white">Add New Quote</h2>
+                <button id="closeQuoteModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="overflow-y-auto p-8 flex-grow">
+                <form id="quoteForm">
+                    <input type="hidden" id="quoteId">
+                    
+                    <!-- Quote Number (Read-only) -->
+                    <div class="mb-6 bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                        <label class="block text-sm font-medium text-blue-900 mb-2">Quote Number</label>
+                        <input type="text" id="quoteNumber" readonly class="w-full border-2 border-blue-300 rounded-lg px-4 py-3 bg-blue-100 text-blue-900 font-bold text-lg" value="PFSQ20251210001">
+                    </div>
+
+                    <!-- Basic Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Company *</label>
+                            <input type="text" id="quoteCompany" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Site</label>
+                            <input type="text" id="quoteSite" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Account Manager *</label>
+                            <select id="quoteAccountManager" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                                <option value="">-- Select Account Manager --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Customer Category</label>
+                            <select id="quoteCustomerCategory" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                                <option value="">-- Select Category --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Contact Name</label>
+                            <input type="text" id="quoteContactName" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                            <input type="tel" id="quoteContactNumber" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Value (£) *</label>
+                            <input type="number" id="quoteValue" required step="0.01" min="0" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Probability (%)</label>
+                            <input type="number" id="quoteProbability" min="0" max="100" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Lead Source</label>
+                            <select id="quoteLeadSource" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                                <option value="">-- Select Source --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Status and Dates -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                            <select id="quoteStatus" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                                <option value="Awaiting" selected>Awaiting</option>
+                                <option value="At Risk">At Risk</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Won">Won</option>
+                                <option value="Superseded">Superseded</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Projected Close Month</label>
+                            <input type="month" id="quoteProjectedCloseDate" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Actual Close Date (Auto-filled when Won)</label>
+                            <input type="date" id="quoteActualCloseDate" readonly class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed">
+                        </div>
+                    </div>
+
+                    <!-- Quotation Category -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quotation Category</label>
+                            <select id="quoteEquipmentClass" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                                <option value="">-- Select Quotation Category --</option>
+                            </select>
+                            <input type="text" id="quoteEquipmentOther" placeholder="If 'Other', specify here..." class="mt-2 w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 hidden">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Works Expected to be Done</label>
+                            <input type="month" id="quoteWorksExpected" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                        </div>
+                    </div>
+
+                    <!-- Notes Section -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                        <div id="quoteNotesList" class="border-2 border-gray-300 rounded-lg p-4 mb-3 bg-gray-50 max-h-48 overflow-y-auto">
+                            <p class="text-gray-400 text-sm italic">No notes yet.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="newQuoteNote" placeholder="Add a note..." class="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500">
+                            <button type="button" id="addQuoteNoteBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700">
+                                <i class="fas fa-plus mr-1"></i>Add Note
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <button type="button" id="deleteQuoteBtn" class="bg-red-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-red-700 hidden">
+                            <i class="fas fa-trash mr-2"></i>Delete Quote
+                        </button>
+                        <div class="flex space-x-3 ml-auto">
+                            <button type="button" id="cancelQuoteBtn" class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg font-medium hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="bg-red-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-red-700">Save Quote</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="settingsPage" class="hidden">
+        <div class="flex h-screen bg-gray-50">
+            <!-- Settings Sidebar -->
+            <div class="w-64 bg-white border-r border-gray-200 shadow-sm">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">Settings</h2>
+                        <button id="closeSettingsPageBtn" class="text-gray-400 hover:text-gray-600 text-xl" title="Back to Schedule">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <nav class="p-4">
+                    <div class="space-y-1">
+                        <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Schedule Settings</h3>
+                        <button id="categoriesNavBtn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition">
+                            <i class="fas fa-tag mr-2"></i>Categories
+                        </button>
+                        <button id="specialisationsNavBtn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
+                            <i class="fas fa-toolbox mr-2"></i>Specialisations
+                        </button>
+                        <button id="engineersNavBtn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
+                            <i class="fas fa-users mr-2"></i>Engineers
+                        </button>
+                    </div>
+                    
+                    <!-- Quote Settings Section -->
+                    <div class="mt-6 space-y-1">
+                        <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Quotation Settings</h3>
+                        <button id="customerCategoriesNavBtn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
+                            <i class="fas fa-building mr-2"></i>Customer Categories
+                        </button>
+                        <button id="equipmentClassesNavBtn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
+                            <i class="fas fa-toolbox mr-2"></i>Quotation Categories
+                        </button>
+                        <button id="leadSourcesNavBtn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
+                            <i class="fas fa-bullseye mr-2"></i>Lead Sources
+                        </button>
+                    </div>
+                    
+                    <!-- Placeholder for future settings sections -->
+                    <div class="mt-6 space-y-1">
+                        <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Application Settings</h3>
+                        <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed" disabled>
+                            <i class="fas fa-cog mr-2"></i>General <span class="text-xs">(Coming Soon)</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed" disabled>
+                            <i class="fas fa-user-shield mr-2"></i>Permissions <span class="text-xs">(Coming Soon)</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed" disabled>
+                            <i class="fas fa-bell mr-2"></i>Notifications <span class="text-xs">(Coming Soon)</span>
+                        </button>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Settings Content Area -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-8">
+                    <!-- Categories Panel -->
+                    <div id="categoriesPanel" class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Job Categories</h2>
+                            <p class="text-gray-600">Manage the categories used for organizing jobs in the schedule.</p>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Current Categories</h3>
+                            <div id="categoryList" class="space-y-2 mb-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Category</h3>
+                            <form id="addCategoryForm" class="flex items-center space-x-3">
+                                <input type="text" id="newCategoryName" placeholder="Enter category name..." class="flex-grow border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition">
+                                <button type="submit" class="bg-red-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-red-700 transition shadow-md hover:shadow-lg">
+                                    <i class="fas fa-plus mr-2"></i>Add Category
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Specialisations Panel -->
+                    <div id="specialisationsPanel" class="bg-white rounded-lg shadow-sm p-6 hidden">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Engineer Specialisations</h2>
+                            <p class="text-gray-600">Manage the specialisations that engineers can have.</p>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Current Specialisations</h3>
+                            <div id="specialisationList" class="space-y-2 mb-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Specialisation</h3>
+                            <form id="addSpecialisationForm" class="flex items-center space-x-3">
+                                <input type="text" id="newSpecialisationName" placeholder="Enter specialisation name..." class="flex-grow border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 transition shadow-md hover:shadow-lg">
+                                    <i class="fas fa-plus mr-2"></i>Add Specialisation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Engineers Panel -->
+                    <div id="engineersPanel" class="bg-white rounded-lg shadow-sm p-6 hidden">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Engineers</h2>
+                            <p class="text-gray-600">View and manage all engineers in the system.</p>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">All Engineers</h3>
+                            <div id="engineerList" class="space-y-2 mb-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Engineer</h3>
+                            <form id="addEngineerFormSettings" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                                        <input type="text" id="newEngineerName" placeholder="Enter engineer name..." class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Specialisations</label>
+                                        <select id="newEngineerSpecialisations" multiple size="3" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                                            <!-- Populated dynamically -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 transition shadow-md hover:shadow-lg">
+                                        <i class="fas fa-plus mr-2"></i>Add Engineer
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Customer Categories Panel -->
+                    <div id="customerCategoriesPanel" class="bg-white rounded-lg shadow-sm p-6 hidden">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Customer Categories</h2>
+                            <p class="text-gray-600">Manage customer categories for quotations.</p>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">All Customer Categories</h3>
+                            <div id="customerCategoryList" class="space-y-2 mb-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Customer Category</h3>
+                            <form id="addCustomerCategoryForm" class="flex gap-3">
+                                <input type="text" id="newCustomerCategory" placeholder="Enter category name..." class="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" required>
+                                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 transition shadow-md hover:shadow-lg whitespace-nowrap">
+                                    <i class="fas fa-plus mr-2"></i>Add Category
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Equipment Classes Panel -->
+                    <div id="equipmentClassesPanel" class="bg-white rounded-lg shadow-sm p-6 hidden">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Quotation Categories</h2>
+                            <p class="text-gray-600">Manage quotation categories for quotes.</p>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">All Quotation Categories</h3>
+                            <div id="equipmentClassList" class="space-y-2 mb-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Equipment Class</h3>
+                            <form id="addEquipmentClassForm" class="flex gap-3">
+                                <input type="text" id="newEquipmentClass" placeholder="Enter equipment class name..." class="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" required>
+                                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 transition shadow-md hover:shadow-lg whitespace-nowrap">
+                                    <i class="fas fa-plus mr-2"></i>Add Class
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Lead Sources Panel -->
+                    <div id="leadSourcesPanel" class="bg-white rounded-lg shadow-sm p-6 hidden">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Lead Sources</h2>
+                            <p class="text-gray-600">Manage lead sources for tracking quote origins.</p>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">All Lead Sources</h3>
+                            <div id="leadSourceList" class="space-y-2 mb-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Add New Lead Source</h3>
+                            <form id="addLeadSourceForm" class="flex gap-3">
+                                <input type="text" id="newLeadSource" placeholder="Enter lead source name..." class="flex-1 border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" required>
+                                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:bg-blue-700 transition shadow-md hover:shadow-lg whitespace-nowrap">
+                                    <i class="fas fa-plus mr-2"></i>Add Source
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-sm mx-4 modal-content transform scale-show">
+            <h3 id="alertTitle" class="text-lg font-bold mb-4">Alert</h3>
+            <p id="alertMessage" class="text-gray-700 mb-6"></p>
+            <div class="flex justify-end space-x-3">
+                <button id="alertCancelBtn" class="bg-gray-200 text-gray-800 py-2 px-4 rounded hidden">Cancel</button>
+                <button id="alertOkBtn" class="bg-red-600 text-white py-2 px-4 rounded">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load modular JS (app bootstraps the app and imports firebase) -->
+    <script>
+        // Check if running from file:// and redirect to http://localhost:8000
+        (function() {
+            const setupModal = document.getElementById('setupModal');
+            const setupStatus = document.getElementById('setupStatus');
+            const setupInfo = document.getElementById('setupInfo');
+            
+            if (window.location.protocol === 'file:') {
+                setupModal.style.display = 'flex';
+                setupStatus.textContent = 'Detecting local server...';
+                
+                // Try to connect to localhost:8000
+                const checkServer = () => {
+                    fetch('http://localhost:8000/', { mode: 'no-cors' })
+                        .then(() => {
+                            setupStatus.innerHTML = '<span class="status-ok">✓ Server found! Redirecting...</span>';
+                            setTimeout(() => {
+                                window.location.href = 'http://localhost:8000/' + window.location.pathname.split('/').pop();
+                            }, 1000);
+                        })
+                        .catch(() => {
+                            setupStatus.innerHTML = '<span class="status-error">✗ Server not running</span>';
+                            setupInfo.classList.remove('hidden');
+                        });
+                };
+                
+                // Check every 500ms for up to 10 seconds
+                let attempts = 0;
+                const interval = setInterval(() => {
+                    attempts++;
+                    if (attempts > 20) {
+                        clearInterval(interval);
+                        setupStatus.innerHTML = '<span class="status-error">✗ Could not connect to server</span>';
+                        setupInfo.classList.remove('hidden');
+                    } else {
+                        checkServer();
+                    }
+                }, 500);
+                
+                checkServer();
+                return;
+            }
+            
+            // If we're on http://, setup modal is already hidden by CSS
+        })();
+    </script>
+    <script>
+        // Debug console disabled for production
+    </script>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 modal-content transform scale-show max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-pink-600 to-pink-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="employeeModalTitle" class="text-2xl font-bold text-white">Add New Employee</h2>
+                <button id="closeEmployeeModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
+            <div class="overflow-y-auto p-8 flex-grow">
+                <form id="employeeForm">
+                    <input type="hidden" id="employeeId">
+
+                    <!-- Personal Information -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3">Personal Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Surname *</label>
+                                <input id="employeeLastName" type="text" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Forename(s) *</label>
+                                <input id="employeeFirstName" type="text" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
+                                <input id="employeeDOB" type="date" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">National Insurance No</label>
+                                <input id="employeeNINumber" type="text" placeholder="AB123456C" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3">Contact Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                                <input id="employeeEmail" type="email" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Mobile Tel No *</label>
+                                <input id="employeePhone" type="tel" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Home Tel No</label>
+                                <input id="employeeHomeTel" type="tel" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3">Address</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Street Address</label>
+                                <input id="employeeAddress" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                                <input id="employeeCity" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Postcode</label>
+                                <input id="employeePostcode" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employment Details -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3">Employment Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Employment Type *</label>
+                                <select id="employeeType" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                                    <option value="">-- Select --</option>
+                                    <option value="employee">Employee</option>
+                                    <option value="subcontractor">Subcontractor</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Appointment (Role) *</label>
+                                <input id="employeeRole" type="text" required placeholder="e.g., Fire Safety Engineer" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Start Date *</label>
+                                <input id="employeeStartDate" type="date" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Employee/Payroll Number</label>
+                                <input id="employeePayrollNumber" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3 bg-red-100 text-red-800 px-4 py-2 rounded">Emergency Contact Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Name</label>
+                                <input id="employeeEmergencyName" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Relationship</label>
+                                <input id="employeeEmergencyRelationship" type="text" placeholder="e.g., Spouse, Parent" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-6 mb-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Address of Emergency Contact</label>
+                                <textarea id="employeeEmergencyAddress" rows="2" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500"></textarea>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Emergency Contact Tel No(s)</label>
+                                <input id="employeeEmergencyPhone" type="tel" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank/Building Society Details -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3 bg-red-100 text-red-800 px-4 py-2 rounded">Bank/Building Society Details</h4>
+                        <div class="grid grid-cols-1 gap-6 mb-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Bank Name and Address</label>
+                                <textarea id="employeeBankAddress" rows="2" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500"></textarea>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Account Holder's Name</label>
+                                <input id="employeeAccountName" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Sort Code</label>
+                                <input id="employeeSortCode" type="text" placeholder="00-00-00" maxlength="8" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Account No</label>
+                                <input id="employeeAccountNumber" type="text" maxlength="8" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Statement -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3 bg-red-100 text-red-800 px-4 py-2 rounded">Employee Statement</h4>
+                        <p class="text-sm text-gray-600 mb-3">Select only one of the following statements A, B or C:</p>
+                        <div class="space-y-3">
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="radio" name="employeeStatement" id="employeeStatementA" value="A" class="mt-1">
+                                <span class="text-sm"><strong>A</strong>—This is my only job since last 6 April and I have not been receiving taxable Jobseeker's allowance, employment and support allowance, taxable incapacity benefit, state or occupational pension.</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="radio" name="employeeStatement" id="employeeStatementB" value="B" class="mt-1">
+                                <span class="text-sm"><strong>B</strong>—This is now my only job but since last 6 April I have had another job, or received taxable Jobseeker's allowance, employment and support allowance or taxable incapacity benefit. I do not receive a state or occupational pension.</span>
+                            </label>
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="radio" name="employeeStatement" id="employeeStatementC" value="C" class="mt-1">
+                                <span class="text-sm"><strong>C</strong>—As well as my new job, I have another job or receive a state or occupational pension.</span>
+                            </label>
+                        </div>
+                        <div class="mt-4">
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" id="employeeStudentLoan" class="w-4 h-4">
+                                <span class="text-sm">I have a student loan which is not fully repaid and I left a course of UK higher education before last 6 April or I received my first Student loan instalment on or after 1 September 1998.</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-2">Select 'No' if you are repaying your Student Loan direct to the Student Loans Company by agreed monthly payments</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <button type="button" id="deleteEmployeeBtn" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 hidden">
+                            <i class="fas fa-trash mr-2"></i>Delete Employee
+                        </button>
+                        <div class="flex space-x-3 ml-auto">
+                            <button type="button" id="cancelEmployeeBtn" class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="bg-pink-600 text-white py-2 px-6 rounded-lg hover:bg-pink-700">Save Employee</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certification Modal -->
+    <div id="certificationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 modal-content transform scale-show">
+            <div class="bg-gradient-to-r from-pink-600 to-pink-700 px-8 py-6 rounded-t-xl flex justify-between items-center">
+                <h2 id="certificationModalTitle" class="text-2xl font-bold text-white">Add Certification</h2>
+                <button id="closeCertificationModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-8">
+                <form id="certificationForm">
+                    <input type="hidden" id="certificationId">
+                    <input type="hidden" id="certificationEmployeeId">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Certification Name *</label>
+                            <input id="certificationName" type="text" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500" placeholder="e.g., Asbestos Awareness, IPAF">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Certificate Number</label>
+                            <input id="certificationNumber" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Issuing Body</label>
+                            <input id="certificationIssuer" type="text" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500" placeholder="e.g., BMTrada, IPAF">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Date Obtained *</label>
+                            <input id="certificationDateObtained" type="date" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Date Expires *</label>
+                            <input id="certificationDateExpires" type="date" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Comments / Notes</label>
+                        <textarea id="certificationComments" rows="3" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500"></textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Attachment Link (Optional)</label>
+                        <input id="certificationAttachment" type="url" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500" placeholder="Link to certificate PDF in SharePoint or cloud storage">
+                        <p class="text-xs text-gray-500 mt-1">Provide a link to the certificate document</p>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <button type="button" id="deleteCertificationBtn" class="bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 hidden">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                        <div class="flex space-x-3 ml-auto">
+                            <button type="button" id="cancelCertificationBtn" class="bg-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="bg-pink-600 text-white py-2 px-6 rounded-lg hover:bg-pink-700">Save Certification</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js?v=30"></script>
+</body>
+</html>

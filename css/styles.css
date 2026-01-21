@@ -1,0 +1,528 @@
+/* Main body styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+}
+
+/* Job Card Styles */
+.job-card {
+    cursor: grab;
+    transition: all 0.2s ease-in-out;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 60px;
+}
+
+.job-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.job-card-company {
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.exception-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: #f59e0b;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.65rem;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+.job-card.has-exception {
+    border-left: 3px solid #f59e0b;
+}
+
+/* Appointment Status Badge */
+.appointment-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+.appointment-status-badge.status-pending {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.appointment-status-badge.status-scheduled {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.appointment-status-badge.status-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.appointment-status-badge.status-cancelled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.job-card-site {
+    font-size: 0.75rem;
+    color: #6b7280;
+    line-height: 1.2;
+}
+
+.job-card-category {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    width: fit-content;
+    margin-top: 2px;
+}
+
+.job-card.not-scheduled {
+    border-style: dashed;
+    opacity: 0.75;
+}
+
+.job-card:active {
+    cursor: grabbing;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    transform: scale(1.03);
+    z-index: 20;
+}
+
+/* Application Item Styles */
+.application-item {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 70px 180px 150px 140px auto;
+    gap: 12px;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.application-item:hover {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+}
+
+.application-number {
+    font-weight: 700;
+    color: #2563eb;
+    font-size: 0.875rem;
+    padding: 4px 8px;
+    background: #dbeafe;
+    border-radius: 4px;
+    min-width: 70px;
+    text-align: center;
+}
+
+.application-desc {
+    width: 180px;
+}
+
+.application-date {
+    width: 150px;
+}
+
+.application-cost {
+    width: 140px;
+}
+
+.remove-application-btn {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 2px solid #fecaca;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.remove-application-btn:hover {
+    background: #fecaca;
+    border-color: #dc2626;
+    transform: scale(1.05);
+}
+
+/* Currency Input Styling */
+.currency-input {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.currency-input::-webkit-inner-spin-button,
+.currency-input::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal-content {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Drag and Drop Styles */
+.dragging {
+    opacity: 0.6;
+}
+
+.drop-zone {
+    transition: background-color 0.2s ease-in-out;
+    min-height: 60px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.drop-zone-hover {
+    background-color: #ebf8ff;
+}
+
+/* Absence Card Styles */
+.absence-card {
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 4px;
+    border: 2px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 60px;
+    position: relative;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.3) 10px,
+        rgba(255, 255, 255, 0.3) 20px
+    );
+}
+
+.absence-card.absence-holiday {
+    background-color: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.5);
+}
+
+.absence-card.absence-sick {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.absence-card.absence-training {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.absence-card.absence-other,
+.absence-card.absence-personal {
+    background-color: rgba(107, 114, 128, 0.15);
+    border-color: rgba(107, 114, 128, 0.5);
+}
+
+.absence-card-type {
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    color: #1f2937;
+}
+
+.absence-card-notes {
+    font-size: 0.75rem;
+    color: #6b7280;
+    line-height: 1.2;
+    font-style: italic;
+}
+
+/* Specialisation Header */
+.specialisation-header {
+    grid-column: 1 / -1;
+    background-color: #e5e7eb;
+    font-weight: 600;
+    position: sticky;
+    top: 3.5rem;
+    left: 0;
+    z-index: 25;
+    border-bottom: 1px solid #d1d5db;
+    border-right: 1px solid #d1d5db;
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0;
+}
+
+.specialisation-header-text {
+    position: sticky;
+    left: 0.5rem;
+    background-color: #e5e7eb;
+    padding-right: 1rem;
+    z-index: 26;
+    white-space: nowrap;
+}
+
+/* Schedule Grid - ensure first column stays fixed */
+#scheduleGrid {
+    overflow-x: auto;
+    overflow-y: visible;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Wrapper to enable rounded corners without hiding scrollbar */
+#scheduleBoard .flex {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Round the corners of the first header cell */
+#scheduleGrid > div:nth-child(1) {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Style improvements for grid cells */
+#scheduleGrid .border-b {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+#scheduleGrid .border-r {
+    border-right: 1px solid #e5e7eb;
+}
+
+/* Make week view cells wider for better readability */
+#scheduleGrid[style*="repeat(7"] > div:not(.specialisation-header) {
+    min-width: 10rem;
+}
+
+#scheduleGrid > div:nth-child(n) {
+    position: relative;
+}
+
+/* Make all cells in first column (engineer names and "Engineer" header) sticky */
+#scheduleGrid > div.sticky {
+    position: sticky !important;
+    left: 0 !important;
+    background-color: white !important;
+    z-index: 15 !important;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+#scheduleGrid > div.sticky.bg-gray-100 {
+    background-color: #f3f4f6 !important;
+    z-index: 30 !important;
+}
+
+/* Specialisation headers need even higher z-index and proper sticking */
+.specialisation-header {
+    position: sticky !important;
+    left: 0 !important;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.specialisation-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12rem;
+    height: 100%;
+    background-color: #e5e7eb;
+    z-index: -1;
+}
+
+/* Custom scrollbar */
+#scheduleBoard::-webkit-scrollbar,
+.forecast-outer-container::-webkit-scrollbar,
+#notesList::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#scheduleBoard::-webkit-scrollbar-track,
+.forecast-outer-container::-webkit-scrollbar-track,
+#notesList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#scheduleBoard::-webkit-scrollbar-thumb,
+.forecast-outer-container::-webkit-scrollbar-thumb,
+#notesList::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+#scheduleBoard::-webkit-scrollbar-thumb:hover,
+.forecast-outer-container::-webkit-scrollbar-thumb:hover,
+#notesList::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+/* Calendar Day Styles */
+.weekend-day {
+    background-color: #f7fafc;
+}
+
+.bank-holiday {
+    background-color: #e2e8f0;
+}
+
+.today-highlight {
+    background-color: #fef2f2;
+}
+
+/* Forecast Table Styles */
+.forecast-outer-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+}
+
+.forecast-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.forecast-table th,
+.forecast-table td {
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.forecast-table th:not(:first-child),
+.forecast-table td:not(:first-child) {
+    width: 85px;
+    min-width: 85px;
+    max-width: 85px;
+}
+
+.forecast-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.forecast-table td:first-child,
+.forecast-table th:first-child,
+.forecast-table tfoot td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    font-weight: 500;
+    width: auto;
+    text-align: left;
+}
+
+.forecast-table td:first-child {
+    background-color: #fff;
+}
+
+.forecast-table th:first-child {
+    z-index: 15;
+    background-color: #f9fafb;
+}
+
+.forecast-table td {
+    text-align: right;
+}
+
+.forecast-table tfoot td {
+    background-color: #f9fafb;
+    font-weight: 700;
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+}
+
+.forecast-table tfoot td:first-child {
+    background-color: #f9fafb;
+    z-index: 6;
+}
+
+.forecast-header.current-week-highlight {
+    background-color: #fef2f2;
+    border: 1px solid #f87171;
+}
+
+.forecast-cost.not-scheduled {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Unscheduled Card Styles */
+.unscheduled-card {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.unscheduled-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Chart Container Styles */
+#forecastChartsContainer {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+#forecastChartsContainer canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#clientChartContainer {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+#clientChartContainer canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
