@@ -1706,10 +1706,13 @@ const setupModalListeners = () => {
                     issuer: document.getElementById('certificationIssuer').value,
                     dateObtained: document.getElementById('certificationDateObtained').value,
                     dateExpires: document.getElementById('certificationDateExpires').value,
-                    comments: document.getElementById('certificationComments').value,
-                    attachmentLink: document.getElementById('certificationAttachment').value,
-                    fileURL: uploadedFileURL || undefined // Store uploaded file URL
+                    comments: document.getElementById('certificationComments').value
                 };
+                
+                // Only add fileURL if a file was uploaded (Firebase doesn't allow undefined)
+                if (uploadedFileURL) {
+                    certificationData.fileURL = uploadedFileURL;
+                }
                 
                 console.log('[APP] Saving certification data:', certificationData);
                 await saveCertification(appState.currentEmployeeId, certificationData, currentCertificationIndex);
@@ -2499,7 +2502,6 @@ const openCertificationModal = (certificationIndex = null) => {
     document.getElementById('certificationDateObtained').value = cert?.dateObtained || '';
     document.getElementById('certificationDateExpires').value = cert?.dateExpires || '';
     document.getElementById('certificationComments').value = cert?.comments || '';
-    document.getElementById('certificationAttachment').value = cert?.attachmentLink || '';
     document.getElementById('certificationEmployeeId').value = appState.currentEmployeeId;
     
     // Show uploaded file if exists
