@@ -127,13 +127,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('[APP] Loading Firebase modules...');
         const firebaseModule = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
         const firestoreModule = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        const storageModule = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
         console.log('[APP] Firebase modules loaded successfully');
 
     const app = firebaseModule.initializeApp(FIREBASE_CONFIG);
     const db = firestoreModule.getFirestore(app);
+    const storage = storageModule.getStorage(app);
 
     const firebaseAPI = {
         db,
+        storage,
         collection: firestoreModule.collection,
         doc: firestoreModule.doc,
         onSnapshot: firestoreModule.onSnapshot,
@@ -144,7 +147,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         setDoc: firestoreModule.setDoc,
         writeBatch: firestoreModule.writeBatch,
         query: firestoreModule.query,
-        orderBy: firestoreModule.orderBy
+        orderBy: firestoreModule.orderBy,
+        // Storage functions
+        storageRef: storageModule.ref,
+        uploadBytes: storageModule.uploadBytes,
+        getDownloadURL: storageModule.getDownloadURL,
+        deleteObject: storageModule.deleteObject
     };
 
     initializeDatabase(firebaseAPI);
@@ -1657,20 +1665,63 @@ const setupModalListeners = () => {
                 return;
             }
             
+            // Handle file upload first if present
+            let uploadedFileURL = null;
+            const fileInput = document.getElementById('certificationFile');
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                
+                // Validate file size (10MB max)
+                if (file.size > 10 * 1024 * 1024) {
+                    await showAlert(dom, 'File size must be less than 10MB');
+                    return;
+                }
+                
+                try {
+                    dom.loadingSpinner.style.display = 'flex';
+                    console.log('[APP] Uploading certificate file:', file.name);
+                    
+                    const { getFirebaseAPI } = await import('./db.js');
+                    const firebaseAPI = getFirebaseAPI();
+                    
+                    // Create a storage reference
+                    const timestamp = Date.now();
+                    const fileName = `${timestamp}_${file.name}`;
+                    const storageRef = firebaseAPI.storageRef(firebaseAPI.storage, `certifications/${appState.currentEmployeeId}/${fileName}`);
+                    
+                    // Upload file
+                    await firebaseAPI.uploadBytes(storageRef, file);
+                    
+                    // Get download URL
+                    uploadedFileURL = await firebaseAPI.getDownloadURL(storageRef);
+                    console.log('[APP] File uploaded successfully:', uploadedFileURL);
+                    
+                    dom.loadingSpinner.style.display = 'none';
+                } catch (error) {
+                    console.error('[APP] File upload error:', error);
+                    dom.loadingSpinner.style.display = 'none';
+                    await showAlert(dom, 'Error uploading file. Please try again.');
+                    return;
+                }
+            }
+            
             const certificationData = {
                 name: document.getElementById('certificationName').value,
                 number: document.getElementById('certificationNumber').value,
                 issuer: document.getElementById('certificationIssuer').value,
-                dateObtained: document.getElementById('certificationObtained').value,
-                dateExpires: document.getElementById('certificationExpires').value,
+                dateObtained: document.getElementById('certificationDateObtained').value,
+                dateExpires: document.getElementById('certificationDateExpires').value,
                 comments: document.getElementById('certificationComments').value,
-                attachmentLink: document.getElementById('certificationAttachment').value
+                attachmentLink: document.getElementById('certificationAttachment').value,
+                fileURL: uploadedFileURL || undefined // Store uploaded file URL
             };
             
             try {
                 await saveCertification(appState.currentEmployeeId, certificationData, currentCertificationIndex);
                 closeModal(dom.certificationModal);
                 await showAlert(dom, 'Certification saved successfully.');
+                // Clear file input
+                if (fileInput) fileInput.value = '';
                 // Refresh employee page
                 renderEmployeePage(appState.currentEmployeeId);
             } catch (error) {
@@ -2443,10 +2494,27 @@ const openCertificationModal = (certificationIndex = null) => {
     document.getElementById('certificationName').value = cert?.name || '';
     document.getElementById('certificationNumber').value = cert?.number || '';
     document.getElementById('certificationIssuer').value = cert?.issuer || '';
-    document.getElementById('certificationObtained').value = cert?.dateObtained || '';
-    document.getElementById('certificationExpires').value = cert?.dateExpires || '';
+    document.getElementById('certificationDateObtained').value = cert?.dateObtained || '';
+    document.getElementById('certificationDateExpires').value = cert?.dateExpires || '';
     document.getElementById('certificationComments').value = cert?.comments || '';
     document.getElementById('certificationAttachment').value = cert?.attachmentLink || '';
+    document.getElementById('certificationEmployeeId').value = appState.currentEmployeeId;
+    
+    // Show uploaded file if exists
+    const filePreview = document.getElementById('certificationFilePreview');
+    const fileLink = document.getElementById('certificationFileLink');
+    const fileName = document.getElementById('certificationFileName');
+    if (cert?.fileURL && filePreview && fileLink && fileName) {
+        fileLink.href = cert.fileURL;
+        fileName.textContent = 'View uploaded certificate';
+        filePreview.classList.remove('hidden');
+    } else if (filePreview) {
+        filePreview.classList.add('hidden');
+    }
+    
+    // Clear file input
+    const fileInput = document.getElementById('certificationFile');
+    if (fileInput) fileInput.value = '';
     
     document.getElementById('certificationModalTitle').textContent = cert ? 'Edit Certification' : 'Add Certification';
     document.getElementById('deleteCertificationBtn').style.display = cert ? 'inline-block' : 'none';

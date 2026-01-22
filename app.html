@@ -2390,9 +2390,20 @@
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Attachment Link (Optional)</label>
-                        <input id="certificationAttachment" type="url" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500" placeholder="Link to certificate PDF in SharePoint or cloud storage">
-                        <p class="text-xs text-gray-500 mt-1">Provide a link to the certificate document</p>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Certificate Document (Optional)</label>
+                        <input id="certificationFile" type="file" accept=".pdf,.jpg,.jpeg,.png" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500">
+                        <p class="text-xs text-gray-500 mt-1">Upload certificate PDF or image (max 10MB). File will be stored in Firebase Storage.</p>
+                        <div id="certificationFilePreview" class="mt-2 hidden">
+                            <a id="certificationFileLink" href="#" target="_blank" class="text-pink-600 hover:text-pink-700">
+                                <i class="fas fa-file-pdf mr-2"></i><span id="certificationFileName">View uploaded certificate</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">External Link (Optional)</label>
+                        <input id="certificationAttachment" type="url" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:border-pink-500" placeholder="Link to certificate in SharePoint or other cloud storage">
+                        <p class="text-xs text-gray-500 mt-1">Or provide a link to the certificate document stored elsewhere</p>
                     </div>
 
                     <!-- Form Actions -->
