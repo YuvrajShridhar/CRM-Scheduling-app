@@ -9,6 +9,7 @@ let quotesCollection = null;
 let clientsCollection = null;
 let suppliersCollection = null;
 let purchaseOrdersCollection = null;
+let employeesCollection = null;
 let settingsDocRef = null;
 let firebaseAPI = null;
 
@@ -26,6 +27,7 @@ export const initializeDatabase = (firebaseData) => {
     clientsCollection = firebaseData.collection(db, 'clients');
     suppliersCollection = firebaseData.collection(db, 'suppliers');
     purchaseOrdersCollection = firebaseData.collection(db, 'purchaseOrders');
+    employeesCollection = firebaseData.collection(db, 'employees');
     settingsDocRef = firebaseData.doc(db, 'settings', 'config');
 };
 
@@ -303,7 +305,6 @@ export const listenForEmployees = (callback, errorCallback) => {
         return;
     }
     console.log('[DB] Setting up employees listener...');
-    const employeesCollection = firebaseAPI.collection(db, 'employees');
     firebaseAPI.onSnapshot(employeesCollection, (snapshot) => {
         const employees = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         console.log(`[DB] Employees listener fired: ${employees.length} employees`);
@@ -316,22 +317,33 @@ export const listenForEmployees = (callback, errorCallback) => {
 
 export const addEmployee = async (employeeData) => {
     if (!firebaseAPI) return;
-    const employeesCollection = firebaseAPI.collection(db, 'employees');
     employeeData.createdAt = firebaseAPI.Timestamp ? firebaseAPI.Timestamp.now() : new Date();
     employeeData.updatedAt = firebaseAPI.Timestamp ? firebaseAPI.Timestamp.now() : new Date();
     employeeData.certifications = employeeData.certifications || [];
+    console.log('[DB] Adding employee:', employeeData);
     return firebaseAPI.addDoc(employeesCollection, employeeData);
 };
 
 export const updateEmployee = async (employeeId, employeeData) => {
-    if (!firebaseAPI) return;
-    const employeesCollection = firebaseAPI.collection(db, 'employees');
+    if (!firebaseAPI) {
+        console.error('[DB] Firebase API not initialized for updateEmployee');
+        return;
+    }
+    console.log('[DB] Updating employee:', employeeId, 'with data:', employeeData);
     employeeData.updatedAt = firebaseAPI.Timestamp ? firebaseAPI.Timestamp.now() : new Date();
-    return firebaseAPI.updateDoc(firebaseAPI.doc(employeesCollection, employeeId), employeeData);
+    try {
+        const docRef = firebaseAPI.doc(employeesCollection, employeeId);
+        console.log('[DB] Document reference created for employee:', employeeId);
+        await firebaseAPI.updateDoc(docRef, employeeData);
+        console.log('[DB] Employee updated successfully');
+    } catch (error) {
+        console.error('[DB] Error updating employee:', error);
+        throw error;
+    }
 };
 
 export const deleteEmployee = async (employeeId) => {
     if (!firebaseAPI) return;
-    const employeesCollection = firebaseAPI.collection(db, 'employees');
+    console.log('[DB] Deleting employee:', employeeId);
     return firebaseAPI.deleteDoc(firebaseAPI.doc(employeesCollection, employeeId));
 };

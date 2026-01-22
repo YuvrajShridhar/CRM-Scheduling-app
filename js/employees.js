@@ -260,24 +260,38 @@ function renderCertifications(employee) {
 // Save certification to employee
 export async function saveCertification(employeeId, certificationData, certificationIndex = null) {
     try {
+        console.log('[EMPLOYEES] saveCertification called with:', { employeeId, certificationData, certificationIndex });
+        
         const employee = appState.employees.find(e => e.id === employeeId);
-        if (!employee) throw new Error('Employee not found');
+        if (!employee) {
+            console.error('[EMPLOYEES] Employee not found:', employeeId);
+            throw new Error('Employee not found');
+        }
 
+        console.log('[EMPLOYEES] Found employee:', employee);
+        
         let certifications = employee.certifications || [];
+        console.log('[EMPLOYEES] Current certifications:', certifications);
 
         if (certificationIndex !== null && certificationIndex >= 0) {
             // Update existing certification
+            console.log('[EMPLOYEES] Updating certification at index:', certificationIndex);
             certifications[certificationIndex] = certificationData;
         } else {
             // Add new certification
+            console.log('[EMPLOYEES] Adding new certification');
             certifications.push(certificationData);
         }
 
+        console.log('[EMPLOYEES] Updated certifications array:', certifications);
+        console.log('[EMPLOYEES] Calling updateEmployeeDB with certifications');
+        
         await updateEmployeeDB(employeeId, { certifications: certifications });
-        console.log('Certification saved for employee:', employeeId);
+        
+        console.log('[EMPLOYEES] Certification saved successfully for employee:', employeeId);
         return true;
     } catch (error) {
-        console.error('Error saving certification:', error);
+        console.error('[EMPLOYEES] Error saving certification:', error);
         throw error;
     }
 }

@@ -1666,8 +1666,9 @@ const setupModalListeners = () => {
             }
             
             try {
-                // Show loading spinner for entire save process
-                dom.loadingSpinner.style.display = 'flex';
+                // Show loading spinner on modal (not full page)
+                const modalSpinner = document.getElementById('certificationModalSpinner');
+                if (modalSpinner) modalSpinner.style.display = 'flex';
                 
                 // Handle file upload first if present
                 let uploadedFileURL = null;
@@ -1677,7 +1678,7 @@ const setupModalListeners = () => {
                     
                     // Validate file size (10MB max)
                     if (file.size > 10 * 1024 * 1024) {
-                        dom.loadingSpinner.style.display = 'none';
+                        if (modalSpinner) modalSpinner.style.display = 'none';
                         await showAlert(dom, 'File size must be less than 10MB');
                         return;
                     }
@@ -1718,7 +1719,7 @@ const setupModalListeners = () => {
                 await saveCertification(appState.currentEmployeeId, certificationData, currentCertificationIndex);
                 
                 // Hide spinner and close modal
-                dom.loadingSpinner.style.display = 'none';
+                if (modalSpinner) modalSpinner.style.display = 'none';
                 closeModal(dom.certificationModal);
                 
                 // Clear file input
@@ -1726,12 +1727,10 @@ const setupModalListeners = () => {
                 
                 // Refresh employee page
                 renderEmployeePage(appState.currentEmployeeId);
-                
-                await showAlert(dom, 'Certification saved successfully.');
             } catch (error) {
                 console.error('[APP] Error in certification save process:', error);
-                dom.loadingSpinner.style.display = 'none';
-                closeModal(dom.certificationModal);
+                const modalSpinner = document.getElementById('certificationModalSpinner');
+                if (modalSpinner) modalSpinner.style.display = 'none';
                 await showAlert(dom, `Error: ${error.message || 'Failed to save certification. Please try again.'}`);
             }
         });
