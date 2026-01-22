@@ -3,7 +3,7 @@ Set objFSO = CreateObject("Scripting.FileSystemObject")
 
 ' Get the directory where this script is located
 scriptPath = objFSO.GetParentFolderName(WScript.ScriptFullName)
-htmlFile = "PFSN MANAGEMENT SYSTEM.html"
+htmlFile = "app.html"
 
 ' Check if Python is available
 On Error Resume Next
@@ -25,5 +25,5 @@ htmlPath = scriptPath & "\" & htmlFile
 If objFSO.FileExists(htmlPath) Then
     objShell.Run htmlPath, 1, False
 Else
-    MsgBox "Error: Could not find " & htmlFile & " in " & scriptPath, vbCritical, "PFSN Management System"
+    MsgBox "Error: Could not find " & htmlFile & " in " & scriptPath, vbCritical, "CRM System"
 End If
