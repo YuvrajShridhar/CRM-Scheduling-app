@@ -2,10 +2,14 @@ import { CATEGORY_COLOURS, SPECIALISATION_ORDER } from './config.js';
 
 // Date Utility Functions
 export const formatDate = (date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
+    // Handle string dates (from input fields) or Date objects
+    const d = typeof date === 'string' ? new Date(date) : date;
+    if (!d || isNaN(d.getTime())) return 'Invalid Date';
+    
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
 };
 
 export const parseDate = (dateString) => new Date(dateString + 'T00:00:00');
