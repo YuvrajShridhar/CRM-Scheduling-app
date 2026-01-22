@@ -245,10 +245,12 @@ function renderCertifications(employee) {
                     </div>
                 </div>
                 ${cert.comments ? `<p class="text-sm text-gray-600 border-t pt-3">${cert.comments}</p>` : ''}
-                ${cert.attachmentLink ? `
+                ${cert.fileURL ? `
                     <div class="mt-3 pt-3 border-t">
-                        <a href="${cert.attachmentLink}" target="_blank" class="text-pink-600 hover:text-pink-700 text-sm">
-                            <i class="fas fa-paperclip mr-1"></i>View Certificate
+                        <a href="${cert.fileURL}" target="_blank" rel="noopener noreferrer" class="text-pink-600 hover:text-pink-700 text-sm inline-flex items-center gap-2">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>View Certificate Document</span>
+                            <i class="fas fa-external-link-alt text-xs"></i>
                         </a>
                     </div>
                 ` : ''}
