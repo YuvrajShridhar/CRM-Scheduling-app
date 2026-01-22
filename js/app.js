@@ -1665,20 +1665,23 @@ const setupModalListeners = () => {
                 return;
             }
             
-            // Handle file upload first if present
-            let uploadedFileURL = null;
-            const fileInput = document.getElementById('certificationFile');
-            if (fileInput && fileInput.files.length > 0) {
-                const file = fileInput.files[0];
+            try {
+                // Show loading spinner for entire save process
+                dom.loadingSpinner.style.display = 'flex';
                 
-                // Validate file size (10MB max)
-                if (file.size > 10 * 1024 * 1024) {
-                    await showAlert(dom, 'File size must be less than 10MB');
-                    return;
-                }
-                
-                try {
-                    dom.loadingSpinner.style.display = 'flex';
+                // Handle file upload first if present
+                let uploadedFileURL = null;
+                const fileInput = document.getElementById('certificationFile');
+                if (fileInput && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    
+                    // Validate file size (10MB max)
+                    if (file.size > 10 * 1024 * 1024) {
+                        dom.loadingSpinner.style.display = 'none';
+                        await showAlert(dom, 'File size must be less than 10MB');
+                        return;
+                    }
+                    
                     console.log('[APP] Uploading certificate file:', file.name);
                     
                     const { getFirebaseAPI } = await import('./db.js');
@@ -1695,39 +1698,38 @@ const setupModalListeners = () => {
                     // Get download URL
                     uploadedFileURL = await firebaseAPI.getDownloadURL(storageRef);
                     console.log('[APP] File uploaded successfully:', uploadedFileURL);
-                    
-                    dom.loadingSpinner.style.display = 'none';
-                } catch (error) {
-                    console.error('[APP] File upload error:', error);
-                    dom.loadingSpinner.style.display = 'none';
-                    await showAlert(dom, 'Error uploading file. Please try again.');
-                    return;
                 }
-            }
-            
-            const certificationData = {
-                name: document.getElementById('certificationName').value,
-                number: document.getElementById('certificationNumber').value,
-                issuer: document.getElementById('certificationIssuer').value,
-                dateObtained: document.getElementById('certificationDateObtained').value,
-                dateExpires: document.getElementById('certificationDateExpires').value,
-                comments: document.getElementById('certificationComments').value,
-                attachmentLink: document.getElementById('certificationAttachment').value,
-                fileURL: uploadedFileURL || undefined // Store uploaded file URL
-            };
-            
-            try {
+                
+                const certificationData = {
+                    name: document.getElementById('certificationName').value,
+                    number: document.getElementById('certificationNumber').value,
+                    issuer: document.getElementById('certificationIssuer').value,
+                    dateObtained: document.getElementById('certificationDateObtained').value,
+                    dateExpires: document.getElementById('certificationDateExpires').value,
+                    comments: document.getElementById('certificationComments').value,
+                    attachmentLink: document.getElementById('certificationAttachment').value,
+                    fileURL: uploadedFileURL || undefined // Store uploaded file URL
+                };
+                
+                console.log('[APP] Saving certification data:', certificationData);
                 await saveCertification(appState.currentEmployeeId, certificationData, currentCertificationIndex);
+                
+                // Hide spinner and close modal
+                dom.loadingSpinner.style.display = 'none';
                 closeModal(dom.certificationModal);
-                await showAlert(dom, 'Certification saved successfully.');
+                
                 // Clear file input
                 if (fileInput) fileInput.value = '';
+                
                 // Refresh employee page
                 renderEmployeePage(appState.currentEmployeeId);
+                
+                await showAlert(dom, 'Certification saved successfully.');
             } catch (error) {
-                console.error('Error saving certification:', error);
+                console.error('[APP] Error in certification save process:', error);
+                dom.loadingSpinner.style.display = 'none';
                 closeModal(dom.certificationModal);
-                await showAlert(dom, 'Error saving certification. Please try again.');
+                await showAlert(dom, `Error: ${error.message || 'Failed to save certification. Please try again.'}`);
             }
         });
     } else {
