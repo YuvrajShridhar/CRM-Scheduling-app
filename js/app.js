@@ -545,12 +545,18 @@ const setupViewNavigationListeners = () => {
     const backFromEmployeesBtn = document.getElementById('backFromEmployeesBtn');
     const backFromEmployeeBtn = document.getElementById('backFromEmployeeBtn');
     const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+    const editEmployeeBtn = document.getElementById('editEmployeeBtn');
     const addCertificationBtn = document.getElementById('addCertificationBtn');
     
     if (hrNavEmployeesBtn) hrNavEmployeesBtn.addEventListener('click', () => switchView('employees'));
     if (backFromEmployeesBtn) backFromEmployeesBtn.addEventListener('click', () => switchView('hr'));
     if (backFromEmployeeBtn) backFromEmployeeBtn.addEventListener('click', () => switchView('employees'));
     if (addEmployeeBtn) addEmployeeBtn.addEventListener('click', () => openEmployeeModal());
+    if (editEmployeeBtn) editEmployeeBtn.addEventListener('click', () => {
+        if (appState.currentEmployeeId) {
+            openEmployeeModal(appState.currentEmployeeId);
+        }
+    });
     if (addCertificationBtn) addCertificationBtn.addEventListener('click', () => {
         if (appState.currentEmployeeId) {
             openCertificationModal();
