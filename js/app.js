@@ -1107,7 +1107,6 @@ const setupModalListeners = () => {
             if (client) {
                 try {
                     await updateClient(clientId, { isActive: !client.isActive });
-                    await showAlert(dom, `Client ${client.isActive ? 'deactivated' : 'reactivated'} successfully.`);
                 } catch (error) {
                     console.error('Error toggling client active status:', error);
                     await showAlert(dom, 'Error updating client. Please try again.');
@@ -1353,7 +1352,6 @@ const setupModalListeners = () => {
             if (supplier && confirm(`Delete supplier "${supplier.company}"? This cannot be undone.`)) {
                 try {
                     await deleteSupplier(appState.currentSupplierId);
-                    await showAlert(dom, 'Supplier deleted successfully.');
                     switchView('suppliersLog');
                 } catch (error) {
                     console.error('Error deleting supplier:', error);
@@ -1408,7 +1406,6 @@ const setupModalListeners = () => {
         if (supplierName && supplierName.trim()) {
             try {
                 const docRef = await addSupplier({ company: supplierName.trim(), isActive: true });
-                await showAlert(dom, 'Supplier added successfully.');
                 // Wait a moment for listener to fire and update appState
                 setTimeout(() => {
                     // Repopulate supplier dropdown in PO modal
@@ -1465,7 +1462,6 @@ const setupModalListeners = () => {
             try {
                 await updateSupplier(appState.currentSupplierId, { activityLog });
                 noteField.value = '';
-                await showAlert(dom, 'Note saved successfully.');
             } catch (error) {
                 console.error('Error saving supplier note:', error);
                 await showAlert(dom, 'Error saving note. Please try again.');
@@ -1497,10 +1493,8 @@ const setupModalListeners = () => {
         try {
             if (supplierId) {
                 await updateSupplier(supplierId, supplierData);
-                await showAlert(dom, 'Supplier updated successfully.');
             } else {
                 await addSupplier(supplierData);
-                await showAlert(dom, 'Supplier added successfully.');
             }
             closeModal(document.getElementById('supplierModal'));
         } catch (error) {
@@ -1547,10 +1541,8 @@ const setupModalListeners = () => {
         try {
             if (poId) {
                 await updatePurchaseOrder(poId, poData);
-                await showAlert(dom, 'Purchase order updated successfully.');
             } else {
                 await addPurchaseOrder(poData);
-                await showAlert(dom, 'Purchase order created successfully.');
             }
             closeModal(document.getElementById('poModal'));
         } catch (error) {
@@ -1614,7 +1606,6 @@ const setupModalListeners = () => {
                 if (employeeId) {
                     await updateEmployee(employeeId, employeeData);
                     closeModal(dom.employeeModal);
-                    await showAlert(dom, 'Employee updated successfully.');
                     if (appState.currentView === 'employee') {
                         renderEmployeePage(employeeId);
                     } else {
@@ -1623,7 +1614,6 @@ const setupModalListeners = () => {
                 } else {
                     await addEmployee(employeeData);
                     closeModal(dom.employeeModal);
-                    await showAlert(dom, 'Employee added successfully.');
                     switchView('employees');
                 }
             } catch (error) {
@@ -1642,7 +1632,6 @@ const setupModalListeners = () => {
             try {
                 await deleteEmployee(employeeId);
                 closeModal(dom.employeeModal);
-                await showAlert(dom, 'Employee deleted successfully.');
                 switchView('employees');
             } catch (error) {
                 console.error('Error deleting employee:', error);
@@ -1745,7 +1734,6 @@ const setupModalListeners = () => {
             try {
                 await deleteCertification(appState.currentEmployeeId, currentCertificationIndex);
                 closeModal(dom.certificationModal);
-                await showAlert(dom, 'Certification deleted successfully.');
                 renderEmployeePage(appState.currentEmployeeId);
             } catch (error) {
                 console.error('Error deleting certification:', error);
