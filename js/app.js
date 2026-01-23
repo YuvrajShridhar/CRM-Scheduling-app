@@ -2495,12 +2495,22 @@ const openCertificationModal = (certificationIndex = null) => {
     const filePreview = document.getElementById('certificationFilePreview');
     const fileLink = document.getElementById('certificationFileLink');
     const fileName = document.getElementById('certificationFileName');
+    
+    console.log('[APP] Certification data:', cert);
+    console.log('[APP] FileURL:', cert?.fileURL);
+    
     if (cert?.fileURL && filePreview && fileLink && fileName) {
         fileLink.href = cert.fileURL;
-        fileName.textContent = 'View uploaded certificate';
+        // Extract filename from URL or use default
+        const urlFileName = cert.fileURL.split('/').pop().split('?')[0];
+        // Remove timestamp prefix if present (e.g., "1234567890_filename.pdf" -> "filename.pdf")
+        const displayName = urlFileName.includes('_') ? urlFileName.substring(urlFileName.indexOf('_') + 1) : urlFileName;
+        fileName.textContent = decodeURIComponent(displayName) || 'View certificate';
         filePreview.classList.remove('hidden');
+        console.log('[APP] Showing file preview:', displayName);
     } else if (filePreview) {
         filePreview.classList.add('hidden');
+        console.log('[APP] No fileURL found, hiding preview');
     }
     
     // Clear file input
