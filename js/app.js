@@ -1677,17 +1677,35 @@ const setupModalListeners = () => {
                     const { getFirebaseAPI } = await import('./db.js');
                     const firebaseAPI = getFirebaseAPI();
                     
-                    // Create a storage reference
-                    const timestamp = Date.now();
-                    const fileName = `${timestamp}_${file.name}`;
-                    const storageRef = firebaseAPI.storageRef(firebaseAPI.storage, `certifications/${appState.currentEmployeeId}/${fileName}`);
-                    
-                    // Upload file
-                    await firebaseAPI.uploadBytes(storageRef, file);
-                    
-                    // Get download URL
-                    uploadedFileURL = await firebaseAPI.getDownloadURL(storageRef);
-                    console.log('[APP] File uploaded successfully:', uploadedFileURL);
+                    try {
+                        // Create a storage reference
+                        const timestamp = Date.now();
+                        const fileName = `${timestamp}_${file.name}`;
+                        const storageRef = firebaseAPI.storageRef(firebaseAPI.storage, `certifications/${appState.currentEmployeeId}/${fileName}`);
+                        
+                        // Upload file
+                        console.log('[APP] Starting file upload...');
+                        const uploadResult = await firebaseAPI.uploadBytes(storageRef, file);
+                        console.log('[APP] Upload complete, getting download URL...');
+                        
+                        // Get download URL - wrap in its own try-catch
+                        try {
+                            uploadedFileURL = await firebaseAPI.getDownloadURL(storageRef);
+                            console.log('[APP] File uploaded successfully, URL:', uploadedFileURL);
+                        } catch (urlError) {
+                            console.error('[APP] Error getting download URL:', urlError);
+                            // Try to construct URL manually as fallback
+                            const bucket = 'crm-scheduling-app.firebasestorage.app';
+                            const encodedPath = encodeURIComponent(`certifications/${appState.currentEmployeeId}/${fileName}`);
+                            uploadedFileURL = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedPath}?alt=media`;
+                            console.log('[APP] Using fallback URL:', uploadedFileURL);
+                        }
+                    } catch (uploadError) {
+                        console.error('[APP] File upload error:', uploadError);
+                        if (modalSpinner) modalSpinner.style.display = 'none';
+                        await showAlert(dom, `File upload failed: ${uploadError.message}`);
+                        return;
+                    }
                 }
                 
                 const certificationData = {
