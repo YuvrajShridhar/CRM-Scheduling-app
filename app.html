@@ -285,19 +285,24 @@
     <div id="teamSchedulePage" class="hidden">
         <div class="p-4 md:p-6">
             <div class="bg-white rounded-lg shadow p-6">
-                <!-- Single row: Date Controls and View Toggle -->
+                <!-- Single row: View Toggle, Date Controls (centered), Today Button -->
                 <div class="flex items-center justify-between gap-6">
-                    <!-- Date Controls -->
+                    <!-- Week/Month Toggle (left) -->
+                    <div class="flex gap-2">
+                        <button id="scheduleWeekViewBtn" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 whitespace-nowrap">Week View</button>
+                        <button id="scheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    </div>
+                    
+                    <!-- Date Controls (center) -->
                     <div id="dateControls" class="flex items-center gap-2">
                         <button id="prevBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button>
                         <span id="currentDateRange" class="min-w-48 text-center font-bold text-gray-800"></span>
                         <button id="nextBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button>
                     </div>
                     
-                    <!-- Week/Month Toggle -->
-                    <div class="flex gap-2">
-                        <button id="scheduleWeekViewBtn" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 whitespace-nowrap">Week View</button>
-                        <button id="scheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    <!-- Today Button (right) -->
+                    <div>
+                        <button id="scheduleTodayBtn" class="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 whitespace-nowrap"><i class="fas fa-calendar-day mr-2"></i>Today</button>
                     </div>
                 </div>
             </div>
@@ -308,19 +313,24 @@
     <div id="officeSchedulePage" class="hidden">
         <div class="p-4 md:p-6">
             <div class="bg-white rounded-lg shadow p-6">
-                <!-- Single row: Date Controls and View Toggle -->
+                <!-- Single row: View Toggle, Date Controls (centered), Today Button -->
                 <div class="flex items-center justify-between gap-6">
-                    <!-- Date Controls -->
+                    <!-- Week/Month Toggle (left) -->
+                    <div class="flex gap-2">
+                        <button id="officeScheduleWeekViewBtn" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 whitespace-nowrap">Week View</button>
+                        <button id="officeScheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    </div>
+                    
+                    <!-- Date Controls (center) -->
                     <div id="officeDateControls" class="flex items-center gap-2">
                         <button id="officePrevBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button>
                         <span id="officeCurrentDateRange" class="min-w-48 text-center font-bold text-gray-800"></span>
                         <button id="officeNextBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button>
                     </div>
                     
-                    <!-- Week/Month Toggle -->
-                    <div class="flex gap-2">
-                        <button id="officeScheduleWeekViewBtn" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 whitespace-nowrap">Week View</button>
-                        <button id="officeScheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    <!-- Today Button (right) -->
+                    <div>
+                        <button id="officeScheduleTodayBtn" class="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 whitespace-nowrap"><i class="fas fa-calendar-day mr-2"></i>Today</button>
                     </div>
                 </div>
             </div>

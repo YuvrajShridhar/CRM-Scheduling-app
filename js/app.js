@@ -610,6 +610,26 @@ const setupViewNavigationListeners = () => {
         });
     }
 
+    // Today buttons for schedule pages
+    const scheduleTodayBtn = document.getElementById('scheduleTodayBtn');
+    const officeScheduleTodayBtn = document.getElementById('officeScheduleTodayBtn');
+    
+    if (scheduleTodayBtn) {
+        scheduleTodayBtn.addEventListener('click', () => {
+            console.log('[CLICK] Schedule Today button clicked');
+            appState.currentDate = new Date();
+            renderCurrentView();
+        });
+    }
+    
+    if (officeScheduleTodayBtn) {
+        officeScheduleTodayBtn.addEventListener('click', () => {
+            console.log('[CLICK] Office Schedule Today button clicked');
+            appState.currentDate = new Date();
+            renderCurrentView();
+        });
+    }
+
     if (dom.nextBtn) {
         dom.nextBtn.addEventListener('click', () => {
             window.logUI('📌 Clicked: Next');
