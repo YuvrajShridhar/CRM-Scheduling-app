@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM System - Team Schedule</title>
+    <title>PFSN Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -52,7 +52,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <img id="logoToHome" src="https://cdn.prod.website-files.com/5f981d49ca231a918581264f/67f38a116a2ff4320163d4b4_PFS_Network_Logo_Upscaled-p-500.webp" alt="PFS Network Ltd Logo" class="h-16 w-auto cursor-pointer" title="Back to Dashboard">
-                    <h1 id="mainTitle" class="text-3xl font-bold text-gray-800">PFS Network Ltd Management System</h1>
+                    <h1 id="mainTitle" class="text-3xl font-bold text-gray-800">PFSN Management System</h1>
                 </div>
                 <button id="settingsBtn" class="text-gray-600 hover:text-gray-900 text-2xl p-3 rounded hover:bg-gray-200"><i class="fas fa-cog"></i></button>
             </div>
@@ -172,7 +172,6 @@
     <!-- Section Pages -->
     <!-- Operations Section -->
     <div id="operationsPage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Operations</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="opsNavAddJobBtn">
                 <div class="flex items-center mb-2">
@@ -236,8 +235,7 @@
     
     <!-- Clients Log Page -->
     <div id="clientsLogPage" class="p-4 md:p-6 hidden">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Clients</h1>
+        <div class="flex items-center justify-end mb-6">
             <button id="addClientBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 shadow-lg">
                 <i class="fas fa-plus mr-2"></i>Add Client
             </button>
@@ -251,7 +249,6 @@
             <button id="backToClientsBtn" class="text-blue-600 hover:text-blue-800 mb-3">
                 <i class="fas fa-arrow-left mr-2"></i>Back to Clients
             </button>
-            <h1 id="clientPageName" class="text-3xl font-bold text-gray-800"></h1>
         </div>
 
         <!-- Client Tabs -->
@@ -287,10 +284,8 @@
     <div id="teamSchedulePage" class="hidden">
         <div class="p-4 md:p-6">
             <div class="bg-white rounded-lg shadow p-6">
-                <!-- Single row: Title, Date Controls, and View Toggle -->
+                <!-- Single row: Date Controls and View Toggle -->
                 <div class="flex items-center justify-between gap-6">
-                    <h1 class="text-3xl font-bold text-gray-800 whitespace-nowrap">Team Schedule</h1>
-                    
                     <!-- Date Controls -->
                     <div id="dateControls" class="flex items-center gap-2">
                         <button id="prevBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button>
@@ -312,10 +307,8 @@
     <div id="officeSchedulePage" class="hidden">
         <div class="p-4 md:p-6">
             <div class="bg-white rounded-lg shadow p-6">
-                <!-- Single row: Title, Date Controls, and View Toggle -->
+                <!-- Single row: Date Controls and View Toggle -->
                 <div class="flex items-center justify-between gap-6">
-                    <h1 class="text-3xl font-bold text-gray-800 whitespace-nowrap">Office Schedule</h1>
-                    
                     <!-- Date Controls -->
                     <div id="officeDateControls" class="flex items-center gap-2">
                         <button id="officePrevBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button>
@@ -337,7 +330,6 @@
 
     <!-- Sales Section -->
     <div id="salesPage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Sales</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-red-600 to-red-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="salesNavQuotationsBtn">
                 <div class="flex items-center mb-2">
@@ -358,7 +350,6 @@
 
     <!-- Finance Section -->
     <div id="financePage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Finance</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="financeNavForecastBtn">
                 <div class="flex items-center mb-2">
@@ -400,7 +391,6 @@
 
     <!-- Purchasing Section -->
     <div id="purchasingPage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Purchasing</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="purchasingNavPOsBtn">
                 <div class="flex items-center mb-2">
@@ -532,7 +522,6 @@
         </div>
         <div class="bg-white rounded-lg shadow">
             <div class="p-6">
-                <h1 id="supplierPageName" class="text-3xl font-bold text-gray-800 mb-6"></h1>
                 <div id="supplierDetailsContent"></div>
             </div>
         </div>
@@ -540,7 +529,6 @@
 
     <!-- Warehouse Section -->
     <div id="warehousePage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Warehouse</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
                 <div class="flex items-center mb-2">
@@ -561,7 +549,6 @@
 
     <!-- Compliance Section -->
     <div id="compliancePage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Compliance</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="complianceNavFireDoorsBtn">
                 <div class="flex items-center mb-2">
@@ -590,13 +577,10 @@
     <!-- Fire Doors Compliance Page -->
     <div id="fireDoorsPage" class="p-4 md:p-6 hidden">
         <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-4">
-                <button id="backFromFireDoorsBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Compliance</span>
-                </button>
-                <h1 class="text-3xl font-bold text-gray-800">Fire Doors - BMTrada Accreditation</h1>
-            </div>
+            <button id="backFromFireDoorsBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Compliance</span>
+            </button>
         </div>
 
         <div class="bg-white rounded-lg shadow p-6 mb-6">
@@ -644,13 +628,10 @@
     <!-- Fire Stopping Compliance Page -->
     <div id="fireStoppingPage" class="p-4 md:p-6 hidden">
         <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-4">
-                <button id="backFromFireStoppingBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Compliance</span>
-                </button>
-                <h1 class="text-3xl font-bold text-gray-800">Fire Stopping - BMTrada Accreditation</h1>
-            </div>
+            <button id="backFromFireStoppingBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Compliance</span>
+            </button>
         </div>
 
         <div class="bg-white rounded-lg shadow p-6 mb-6">
@@ -698,13 +679,10 @@
     <!-- BMTrada Registers Page -->
     <div id="bmtradaRegistersPage" class="p-4 md:p-6 hidden">
         <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-4">
-                <button id="backFromBMTradaRegistersBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Compliance</span>
-                </button>
-                <h1 class="text-3xl font-bold text-gray-800">BMTrada Registers</h1>
-            </div>
+            <button id="backFromBMTradaRegistersBtn" class="text-teal-600 hover:text-teal-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Compliance</span>
+            </button>
             <button class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700">
                 <i class="fas fa-upload mr-2"></i>Import from Door App
             </button>
@@ -788,7 +766,6 @@
 
     <!-- HR / Quality Section -->
     <div id="hrPage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">HR / Quality</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-pink-600 to-pink-700 rounded-lg shadow p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105" id="hrNavAddAbsenceBtn">
                 <div class="flex items-center mb-2">
@@ -817,13 +794,10 @@
     <!-- Employee Records Page -->
     <div id="employeesPage" class="p-4 md:p-6 hidden">
         <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-4">
-                <button id="backFromEmployeesBtn" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to HR</span>
-                </button>
-                <h1 class="text-3xl font-bold text-gray-800">Employee Records</h1>
-            </div>
+            <button id="backFromEmployeesBtn" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to HR</span>
+            </button>
             <button id="addEmployeeBtn" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
                 <i class="fas fa-user-plus mr-2"></i>Add Employee
             </button>
@@ -862,13 +836,10 @@
     <!-- Individual Employee Page -->
     <div id="employeePage" class="p-4 md:p-6 hidden">
         <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-4">
-                <button id="backFromEmployeeBtn" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Employees</span>
-                </button>
-                <h1 id="employeePageName" class="text-3xl font-bold text-gray-800">Employee Details</h1>
-            </div>
+            <button id="backFromEmployeeBtn" class="text-pink-600 hover:text-pink-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Employees</span>
+            </button>
             <div class="flex gap-2">
                 <button id="editEmployeeBtn" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
                     <i class="fas fa-edit mr-2"></i>Edit
@@ -943,7 +914,6 @@
 
     <!-- Reporting Section -->
     <div id="reportingPage" class="p-4 md:p-6 hidden">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Reporting</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg shadow p-4 opacity-60 cursor-not-allowed">
                 <div class="flex items-center mb-2">

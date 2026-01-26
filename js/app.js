@@ -691,6 +691,43 @@ const renderCurrentView = () => {
         console.warn(`[RENDER] Data not fully loaded yet. Jobs: ${appState.isInitialDataLoaded.jobs}, Engineers: ${appState.isInitialDataLoaded.engineers}, Settings: ${appState.isInitialDataLoaded.settings}`);
     }
 
+    // Page title mapping
+    const pageTitles = {
+        'home': 'PFSN Management System',
+        'operations': 'PFSN Management System - Operations',
+        'sales': 'PFSN Management System - Sales',
+        'finance': 'PFSN Management System - Finance',
+        'purchasing': 'PFSN Management System - Purchasing',
+        'warehouse': 'PFSN Management System - Warehouse',
+        'compliance': 'PFSN Management System - Compliance',
+        'hr': 'PFSN Management System - HR / Quality',
+        'reporting': 'PFSN Management System - Reporting',
+        'landing': 'PFSN Management System - Dashboard',
+        'settingsPage': 'PFSN Management System - Settings',
+        'clientsLog': 'PFSN Management System - Clients',
+        'client': 'PFSN Management System - Client Details',
+        'purchaseOrders': 'PFSN Management System - Purchase Orders',
+        'suppliersLog': 'PFSN Management System - Suppliers',
+        'supplier': 'PFSN Management System - Supplier Details',
+        'fireDoors': 'PFSN Management System - Fire Doors',
+        'fireStopping': 'PFSN Management System - Fire Stopping',
+        'bmtradaRegisters': 'PFSN Management System - BMTrada Registers',
+        'employees': 'PFSN Management System - Employee Records',
+        'employee': 'PFSN Management System - Employee Details',
+        'week': 'PFSN Management System - Team Schedule',
+        'month': 'PFSN Management System - Team Schedule',
+        'officeWeek': 'PFSN Management System - Office Schedule',
+        'officeMonth': 'PFSN Management System - Office Schedule',
+        'forecast': 'PFSN Management System - Forecast',
+        'clientInfo': 'PFSN Management System - Client Info',
+        'quotations': 'PFSN Management System - Quotations'
+    };
+    
+    // Update main title
+    if (dom.mainTitle) {
+        dom.mainTitle.textContent = pageTitles[appState.currentView] || 'PFSN Management System';
+    }
+
     try {
         // Get all page elements
         const homePage = document.getElementById('homePage');

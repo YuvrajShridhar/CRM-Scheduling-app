@@ -75,8 +75,11 @@ export const renderClientPage = (dom, state, clientId, openJobModal) => {
     const page = dom.clientPage;
     if (!page) return;
     
-    // Set client name in header
-    dom.clientPageName.textContent = client.companyName + (client.siteName ? ` - ${client.siteName}` : '');
+    // Update main title with client name
+    const mainTitle = document.getElementById('mainTitle');
+    if (mainTitle) {
+        mainTitle.textContent = 'PFSN Management System - ' + client.companyName + (client.siteName ? ` (${client.siteName})` : '');
+    }
     
     // Reset tabs to Details tab (always start on Details)
     const tabConfig = {

@@ -108,7 +108,11 @@ export function renderSupplierPage(supplierId) {
     console.log('[SUPPLIER] Rendering supplier page:', supplier);
     appState.currentSupplierId = supplierId;
 
-    document.getElementById('supplierPageName').textContent = supplier.company;
+    // Update main title with supplier name
+    const mainTitle = document.getElementById('mainTitle');
+    if (mainTitle) {
+        mainTitle.textContent = 'PFSN Management System - ' + supplier.company;
+    }
     
     const content = document.getElementById('supplierDetailsContent');
     if (!content) {

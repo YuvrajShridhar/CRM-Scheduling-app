@@ -141,8 +141,13 @@ export function renderEmployeePage(employeeId) {
         return;
     }
 
-    // Update page title and details
-    document.getElementById('employeePageName').textContent = `${employee.firstName} ${employee.lastName}`;
+    // Update main title with employee name
+    const mainTitle = document.getElementById('mainTitle');
+    if (mainTitle) {
+        mainTitle.textContent = `PFSN Management System - ${employee.firstName} ${employee.lastName}`;
+    }
+
+    // Update page details
     document.getElementById('employeeDetailName').textContent = `${employee.firstName} ${employee.lastName}`;
     document.getElementById('employeeDetailRole').textContent = employee.role || 'N/A';
     document.getElementById('employeeDetailType').textContent = employee.employmentType === 'employee' ? 'Employee' : 'Subcontractor';
