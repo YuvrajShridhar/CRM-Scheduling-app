@@ -1402,6 +1402,13 @@ const setupModalListeners = () => {
     document.getElementById('backFromSuppliersBtn')?.addEventListener('click', () => switchView('purchasing'));
     document.getElementById('backFromSupplierBtn')?.addEventListener('click', () => switchView('suppliersLog'));
     
+    // Back buttons for schedule pages
+    document.getElementById('backFromTeamScheduleBtn')?.addEventListener('click', () => switchView('operations'));
+    document.getElementById('backFromOfficeScheduleBtn')?.addEventListener('click', () => switchView('operations'));
+    
+    // Back button for clients page
+    document.getElementById('backFromClientsBtn')?.addEventListener('click', () => switchView('home'));
+    
     // Create buttons
     document.getElementById('createPOBtn')?.addEventListener('click', () => openPOModal());
     document.getElementById('createSupplierBtn')?.addEventListener('click', () => openSupplierModal());

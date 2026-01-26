@@ -236,7 +236,11 @@
     
     <!-- Clients Log Page -->
     <div id="clientsLogPage" class="p-4 md:p-6 hidden">
-        <div class="flex items-center justify-end mb-6">
+        <div class="flex items-center justify-between mb-6">
+            <button id="backFromClientsBtn" class="text-red-600 hover:text-red-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-medium">Return</span>
+            </button>
             <button id="addClientBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 shadow-lg">
                 <i class="fas fa-plus mr-2"></i>Add Client
             </button>
@@ -285,12 +289,14 @@
     <div id="teamSchedulePage" class="hidden">
         <div class="p-4 md:p-6">
             <div class="bg-white rounded-lg shadow p-6">
-                <!-- Single row: View Toggle, Date Controls (centered), Today Button -->
+                <!-- Single row: Return, Date Controls (centered), Today + View Toggle -->
                 <div class="flex items-center justify-between gap-6">
-                    <!-- Week/Month Toggle (left) -->
-                    <div class="flex gap-2">
-                        <button id="scheduleWeekViewBtn" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 whitespace-nowrap">Week View</button>
-                        <button id="scheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    <!-- Return Button (left) -->
+                    <div>
+                        <button id="backFromTeamScheduleBtn" class="text-purple-600 hover:text-purple-700 flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i>
+                            <span class="font-medium">Return</span>
+                        </button>
                     </div>
                     
                     <!-- Date Controls (center) -->
@@ -300,9 +306,11 @@
                         <button id="nextBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button>
                     </div>
                     
-                    <!-- Today Button (right) -->
-                    <div>
+                    <!-- Today + Week/Month Toggle (right) -->
+                    <div class="flex gap-2">
                         <button id="scheduleTodayBtn" class="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 whitespace-nowrap"><i class="fas fa-calendar-day mr-2"></i>Today</button>
+                        <button id="scheduleWeekViewBtn" class="px-6 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 whitespace-nowrap">Week View</button>
+                        <button id="scheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
                     </div>
                 </div>
             </div>
@@ -313,12 +321,14 @@
     <div id="officeSchedulePage" class="hidden">
         <div class="p-4 md:p-6">
             <div class="bg-white rounded-lg shadow p-6">
-                <!-- Single row: View Toggle, Date Controls (centered), Today Button -->
+                <!-- Single row: Return, Date Controls (centered), Today + View Toggle -->
                 <div class="flex items-center justify-between gap-6">
-                    <!-- Week/Month Toggle (left) -->
-                    <div class="flex gap-2">
-                        <button id="officeScheduleWeekViewBtn" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 whitespace-nowrap">Week View</button>
-                        <button id="officeScheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
+                    <!-- Return Button (left) -->
+                    <div>
+                        <button id="backFromOfficeScheduleBtn" class="text-blue-600 hover:text-blue-700 flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i>
+                            <span class="font-medium">Return</span>
+                        </button>
                     </div>
                     
                     <!-- Date Controls (center) -->
@@ -328,9 +338,11 @@
                         <button id="officeNextBtn" class="px-3 py-2 bg-white border border-gray-400 rounded hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button>
                     </div>
                     
-                    <!-- Today Button (right) -->
-                    <div>
+                    <!-- Today + Week/Month Toggle (right) -->
+                    <div class="flex gap-2">
                         <button id="officeScheduleTodayBtn" class="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 whitespace-nowrap"><i class="fas fa-calendar-day mr-2"></i>Today</button>
+                        <button id="officeScheduleWeekViewBtn" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 whitespace-nowrap">Week View</button>
+                        <button id="officeScheduleMonthViewBtn" class="px-6 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400 whitespace-nowrap">Month View</button>
                     </div>
                 </div>
             </div>
