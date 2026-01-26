@@ -89,6 +89,7 @@ export function renderEmployeesPage() {
                         <p><i class="fas fa-envelope w-4 mr-2 text-pink-500"></i>${emp.email || 'N/A'}</p>
                         <p><i class="fas fa-phone w-4 mr-2 text-pink-500"></i>${emp.phone || 'N/A'}</p>
                         <p><i class="fas fa-calendar w-4 mr-2 text-pink-500"></i>Started: ${startDateStr}</p>
+                        ${emp.dayRate ? `<p><i class="fas fa-pound-sign w-4 mr-2 text-blue-500"></i>Day Rate: £${emp.dayRate.toFixed(2)}</p>` : ''}
                     </div>
                     ${expiringCerts > 0 ? `
                         <div class="mt-4 pt-4 border-t">
@@ -170,6 +171,10 @@ export function renderEmployeePage(employeeId) {
     document.getElementById('employeeDetailStartDate').textContent = startDateStr;
     document.getElementById('employeeDetailEmergencyContact').textContent = employee.emergencyContactName || 'N/A';
     document.getElementById('employeeDetailEmergencyPhone').textContent = employee.emergencyContactPhone || 'N/A';
+
+    // Update labour cost fields
+    document.getElementById('employeeDetailDayRate').textContent = employee.dayRate ? `£${employee.dayRate.toFixed(2)}` : '-';
+    document.getElementById('employeeDetailHourlyRate').textContent = employee.hourlyRate ? `£${employee.hourlyRate.toFixed(2)}` : '-';
 
     // Update type badge color
     const typeBadge = document.getElementById('employeeDetailType');

@@ -1625,6 +1625,8 @@ const setupModalListeners = () => {
                 role: document.getElementById('employeeRole').value,
                 startDate: document.getElementById('employeeStartDate').value,
                 payrollNumber: document.getElementById('employeePayrollNumber').value,
+                dayRate: parseFloat(document.getElementById('employeeDayRate').value) || 0,
+                hourlyRate: parseFloat(document.getElementById('employeeHourlyRate').value) || 0,
                 emergencyContactName: document.getElementById('employeeEmergencyName').value,
                 emergencyContactRelationship: document.getElementById('employeeEmergencyRelationship').value,
                 emergencyContactAddress: document.getElementById('employeeEmergencyAddress').value,
@@ -2497,6 +2499,8 @@ const openEmployeeModal = (employeeId = null) => {
     document.getElementById('employeeRole').value = employee?.role || '';
     document.getElementById('employeeStartDate').value = employee?.startDate || '';
     document.getElementById('employeePayrollNumber').value = employee?.payrollNumber || '';
+    document.getElementById('employeeDayRate').value = employee?.dayRate || '';
+    document.getElementById('employeeHourlyRate').value = employee?.hourlyRate || '';
     document.getElementById('employeeEmergencyName').value = employee?.emergencyContactName || '';
     document.getElementById('employeeEmergencyRelationship').value = employee?.emergencyContactRelationship || '';
     document.getElementById('employeeEmergencyAddress').value = employee?.emergencyContactAddress || '';
