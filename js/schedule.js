@@ -179,9 +179,13 @@ const renderOfficeStaffSchedule = (dom, state, daysInView, bankHolidays, dateOnl
                             }
                         });
                     } else {
-                        // Regular jobs: render across date range
-                        const startDate = parseDate(job.startDate);
-                        const endDate = parseDate(job.endDate);
+                        // Regular jobs: check for engineer-specific date assignments
+                        const engineerAssignment = job.engineerAssignments?.find(a => a.engineerId === staff.id);
+                        
+                        // Use engineer-specific dates if available, otherwise use job dates
+                        const startDate = parseDate(engineerAssignment?.startDate || job.startDate);
+                        const endDate = parseDate(engineerAssignment?.endDate || job.endDate);
+                        
                         if (dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate)) {
                             const dayOfWeek = day.getDay();
                             if (job.allowWeekendWork || (dayOfWeek !== 0 && dayOfWeek !== 6)) {
@@ -260,9 +264,13 @@ const renderEngineersSchedule = (dom, state, daysInView, bankHolidays, dateOnlyF
                                 }
                             });
                         } else {
-                            // Regular jobs: render across date range
-                            const startDate = parseDate(job.startDate);
-                            const endDate = parseDate(job.endDate);
+                            // Regular jobs: check for engineer-specific date assignments
+                            const engineerAssignment = job.engineerAssignments?.find(a => a.engineerId === engineer.id);
+                            
+                            // Use engineer-specific dates if available, otherwise use job dates
+                            const startDate = parseDate(engineerAssignment?.startDate || job.startDate);
+                            const endDate = parseDate(engineerAssignment?.endDate || job.endDate);
+                            
                             if (dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate)) {
                                 const dayOfWeek = day.getDay();
                                 if (job.allowWeekendWork || (dayOfWeek !== 0 && dayOfWeek !== 6)) {

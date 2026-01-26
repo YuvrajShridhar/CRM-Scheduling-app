@@ -1362,6 +1362,16 @@ const setupModalListeners = () => {
             const jobEndDate = document.getElementById('jobEndDate').value;
             const engineerIds = Array.from(document.getElementById('jobEngineers').selectedOptions).map(opt => opt.value);
             loadDailyExceptionsData(currentExceptions, jobStartDate, jobEndDate, engineerIds);
+            
+            // Update engineer assignments display
+            if (id === 'jobEngineers') {
+                // When engineers change, update assignments but preserve existing dates
+                const currentAssignments = getEngineerAssignmentsData();
+                updateEngineerAssignments(currentAssignments);
+            } else {
+                // When job dates change, update with new defaults for engineers without custom dates
+                updateEngineerAssignments(getEngineerAssignmentsData());
+            }
         });
     });
     
@@ -2065,6 +2075,138 @@ const getDailyExceptionsData = () => {
     return exceptions;
 };
 
+// === Engineer Assignment Functions ===
+const updateEngineerAssignments = (assignments = null) => {
+    const section = document.getElementById('engineerAssignmentsSection');
+    const list = document.getElementById('engineerAssignmentsList');
+    const selectedEngineers = Array.from(document.getElementById('jobEngineers').selectedOptions);
+    const jobStartDate = document.getElementById('jobStartDate').value;
+    const jobEndDate = document.getElementById('jobEndDate').value;
+    
+    // Clear current list
+    list.innerHTML = '';
+    
+    // Hide section if no engineers selected
+    if (selectedEngineers.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+    
+    // Show section
+    section.classList.remove('hidden');
+    
+    // Create assignment card for each selected engineer
+    selectedEngineers.forEach(opt => {
+        const engineerId = opt.value;
+        const engineer = appState.engineers.find(e => e.id === engineerId);
+        if (!engineer) return;
+        
+        // Check if we have existing assignment data for this engineer
+        const existingAssignment = assignments?.find(a => a.engineerId === engineerId);
+        
+        const startDate = existingAssignment?.startDate || jobStartDate;
+        const endDate = existingAssignment?.endDate || jobEndDate;
+        
+        const card = document.createElement('div');
+        card.className = 'engineer-assignment-card';
+        card.dataset.engineerId = engineerId;
+        
+        // Format rate display
+        let rateDisplay = '';
+        if (engineer.dayRate) {
+            rateDisplay = `<div class="rate-info">
+                <span class="rate-value">£${parseFloat(engineer.dayRate).toFixed(2)}</span>
+                <span class="rate-label">per day</span>
+            </div>`;
+        } else if (engineer.hourlyRate) {
+            rateDisplay = `<div class="rate-info">
+                <span class="rate-value">£${parseFloat(engineer.hourlyRate).toFixed(2)}</span>
+                <span class="rate-label">per hour</span>
+            </div>`;
+        }
+        
+        card.innerHTML = `
+            <div class="engineer-name">
+                <i class="fas fa-user-hard-hat"></i>
+                ${engineer.name}
+            </div>
+            <div class="date-inputs">
+                <div class="date-input-group">
+                    <label>From:</label>
+                    <input type="date" class="assignment-start" value="${startDate}">
+                </div>
+                <div class="date-input-group">
+                    <label>To:</label>
+                    <input type="date" class="assignment-end" value="${endDate}">
+                </div>
+            </div>
+            ${rateDisplay}
+            <button type="button" class="remove-btn" title="Remove from job">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        // Add remove button listener
+        card.querySelector('.remove-btn').addEventListener('click', () => {
+            // Deselect from the main engineer dropdown
+            const select = document.getElementById('jobEngineers');
+            for (const option of select.options) {
+                if (option.value === engineerId) {
+                    option.selected = false;
+                    break;
+                }
+            }
+            // Update the assignments display
+            updateEngineerAssignments();
+            // Update daily exceptions dropdown
+            const currentExceptions = getDailyExceptionsData();
+            const jobStart = document.getElementById('jobStartDate').value;
+            const jobEnd = document.getElementById('jobEndDate').value;
+            const engIds = Array.from(document.getElementById('jobEngineers').selectedOptions).map(o => o.value);
+            loadDailyExceptionsData(currentExceptions, jobStart, jobEnd, engIds);
+        });
+        
+        list.appendChild(card);
+    });
+};
+
+const getEngineerAssignmentsData = () => {
+    const list = document.getElementById('engineerAssignmentsList');
+    const assignments = [];
+    
+    list.querySelectorAll('.engineer-assignment-card').forEach(card => {
+        const engineerId = card.dataset.engineerId;
+        const engineer = appState.engineers.find(e => e.id === engineerId);
+        const startInput = card.querySelector('.assignment-start');
+        const endInput = card.querySelector('.assignment-end');
+        
+        assignments.push({
+            engineerId: engineerId,
+            engineerName: engineer?.name || 'Unknown',
+            startDate: startInput?.value || '',
+            endDate: endInput?.value || '',
+            dayRate: engineer?.dayRate || 0,
+            hourlyRate: engineer?.hourlyRate || 0
+        });
+    });
+    
+    return assignments;
+};
+
+const loadEngineerAssignmentsData = (assignments) => {
+    // First make sure engineers are selected in the dropdown
+    const select = document.getElementById('jobEngineers');
+    if (assignments && assignments.length > 0) {
+        const assignmentIds = assignments.map(a => a.engineerId);
+        for (const option of select.options) {
+            option.selected = assignmentIds.includes(option.value);
+        }
+    }
+    
+    // Then update the assignments display with saved data
+    updateEngineerAssignments(assignments);
+};
+
 // Add daily exceptions to all jobs for an engineer during their absence period
 const addDailyExceptionsForAbsence = async (absenceData) => {
     const { engineerId, startDate, endDate, type } = absenceData;
@@ -2600,6 +2742,7 @@ const setupFormListeners = () => {
             site: document.getElementById('jobSite').value,
             category: document.getElementById('jobCategory').value,
             engineerIds: Array.from(document.getElementById('jobEngineers').selectedOptions).map(opt => opt.value),
+            engineerAssignments: getEngineerAssignmentsData(),
             startDate: document.getElementById('jobStartDate').value,
             endDate: document.getElementById('jobEndDate').value,
             cost: document.getElementById('jobCost').value,
@@ -3039,6 +3182,9 @@ const openJobModal = async (jobId, prefillData = null) => {
         loadApplicationsData([]);
         loadAppointmentsData([]);
         loadDailyExceptionsData([], '', '', []);
+        // Clear engineer assignments section
+        document.getElementById('engineerAssignmentsSection').classList.add('hidden');
+        document.getElementById('engineerAssignmentsList').innerHTML = '';
         
         // Pre-fill data if provided
         if (prefillData) {
@@ -3093,6 +3239,10 @@ const openJobModal = async (jobId, prefillData = null) => {
     document.getElementById('jobId').value = job.id;
     populateEngineerOptions(dom, appState.engineers, job.engineerIds);
     populateCategoryOptions(dom, appState.categories, job.category);
+    
+    // Load engineer assignments (after populating engineer options)
+    loadEngineerAssignmentsData(job.engineerAssignments || []);
+    
     dom.deleteJobBtn.classList.remove('hidden');
     dom.completeJobBtn.classList.remove('hidden');
     openModal(dom.jobModal);

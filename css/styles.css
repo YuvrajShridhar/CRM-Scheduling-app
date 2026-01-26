@@ -526,3 +526,103 @@ body {
     max-width: 100%;
     max-height: 100%;
 }
+/* Engineer Assignment Card Styles */
+.engineer-assignment-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.engineer-assignment-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.engineer-assignment-card .engineer-name {
+    flex: 0 0 180px;
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.engineer-assignment-card .engineer-name i {
+    color: #64748b;
+}
+
+.engineer-assignment-card .date-inputs {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.engineer-assignment-card .date-input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.engineer-assignment-card .date-input-group label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.engineer-assignment-card .date-input-group input {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    width: 140px;
+    transition: border-color 0.2s;
+}
+
+.engineer-assignment-card .date-input-group input:focus {
+    outline: none;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+}
+
+.engineer-assignment-card .rate-info {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 4px 10px;
+    background: #e0f2fe;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.engineer-assignment-card .rate-info .rate-value {
+    font-weight: 600;
+    color: #0369a1;
+}
+
+.engineer-assignment-card .rate-info .rate-label {
+    color: #64748b;
+}
+
+.engineer-assignment-card .remove-btn {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    color: #ef4444;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.engineer-assignment-card .remove-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
