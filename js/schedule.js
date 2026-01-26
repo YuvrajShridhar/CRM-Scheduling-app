@@ -202,11 +202,14 @@ const renderOfficeStaffSchedule = (dom, state, daysInView, bankHolidays, dateOnl
                         if (isWithinAssignment) {
                             const dayOfWeek = day.getDay();
                             if (job.allowWeekendWork || (dayOfWeek !== 0 && dayOfWeek !== 6)) {
-                                // Check if there's an exception for this date/engineer
+                                // Check if there's an exception for this date/engineer - if so, don't show the job
                                 const hasException = job.dailyExceptions && job.dailyExceptions.some(
                                     exc => exc.date === dateString && exc.engineerId === staff.id
                                 );
-                                cell.appendChild(createJobCard(job, hasException));
+                                // Only render if there's NO exception for this day
+                                if (!hasException) {
+                                    cell.appendChild(createJobCard(job, false));
+                                }
                             }
                         }
                     }
@@ -300,11 +303,14 @@ const renderEngineersSchedule = (dom, state, daysInView, bankHolidays, dateOnlyF
                             if (isWithinAssignment) {
                                 const dayOfWeek = day.getDay();
                                 if (job.allowWeekendWork || (dayOfWeek !== 0 && dayOfWeek !== 6)) {
-                                    // Check if there's an exception for this date/engineer
+                                    // Check if there's an exception for this date/engineer - if so, don't show the job
                                     const hasException = job.dailyExceptions && job.dailyExceptions.some(
                                         exc => exc.date === dateString && exc.engineerId === engineer.id
                                     );
-                                    cell.appendChild(createJobCard(job, hasException));
+                                    // Only render if there's NO exception for this day
+                                    if (!hasException) {
+                                        cell.appendChild(createJobCard(job, false));
+                                    }
                                 }
                             }
                         }
