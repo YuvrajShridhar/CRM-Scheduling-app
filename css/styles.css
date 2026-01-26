@@ -611,6 +611,27 @@ body {
     color: #64748b;
 }
 
+.engineer-assignment-card .assignment-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 6px;
+}
+
+.engineer-assignment-card .add-period-btn {
+    padding: 6px 10px;
+    color: #16a34a;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.engineer-assignment-card .add-period-btn:hover {
+    background: #dcfce7;
+    color: #15803d;
+}
+
 .engineer-assignment-card .remove-btn {
     flex: 0 0 auto;
     padding: 6px 10px;

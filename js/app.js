@@ -2076,7 +2076,7 @@ const getDailyExceptionsData = () => {
 };
 
 // === Engineer Assignment Functions ===
-const updateEngineerAssignments = (assignments = null) => {
+const updateEngineerAssignments = (existingAssignments = null) => {
     const section = document.getElementById('engineerAssignmentsSection');
     const list = document.getElementById('engineerAssignmentsList');
     const selectedEngineers = Array.from(document.getElementById('jobEngineers').selectedOptions);
@@ -2095,79 +2095,124 @@ const updateEngineerAssignments = (assignments = null) => {
     // Show section
     section.classList.remove('hidden');
     
-    // Create assignment card for each selected engineer
+    // For each selected engineer, create assignment cards
     selectedEngineers.forEach(opt => {
         const engineerId = opt.value;
         const engineer = appState.engineers.find(e => e.id === engineerId);
         if (!engineer) return;
         
-        // Check if we have existing assignment data for this engineer
-        const existingAssignment = assignments?.find(a => a.engineerId === engineerId);
+        // Get all existing assignments for this engineer (supports multiple periods)
+        const engineerAssignments = existingAssignments?.filter(a => a.engineerId === engineerId) || [];
         
-        const startDate = existingAssignment?.startDate || jobStartDate;
-        const endDate = existingAssignment?.endDate || jobEndDate;
-        
-        const card = document.createElement('div');
-        card.className = 'engineer-assignment-card';
-        card.dataset.engineerId = engineerId;
-        
-        // Format rate display
-        let rateDisplay = '';
-        if (engineer.dayRate) {
-            rateDisplay = `<div class="rate-info">
-                <span class="rate-value">£${parseFloat(engineer.dayRate).toFixed(2)}</span>
-                <span class="rate-label">per day</span>
-            </div>`;
-        } else if (engineer.hourlyRate) {
-            rateDisplay = `<div class="rate-info">
-                <span class="rate-value">£${parseFloat(engineer.hourlyRate).toFixed(2)}</span>
-                <span class="rate-label">per hour</span>
-            </div>`;
+        // If no existing assignments, create one with job defaults
+        if (engineerAssignments.length === 0) {
+            createAssignmentCard(list, engineer, jobStartDate, jobEndDate, true);
+        } else {
+            // Create a card for each existing assignment period
+            engineerAssignments.forEach((assignment, index) => {
+                createAssignmentCard(list, engineer, assignment.startDate, assignment.endDate, index === 0);
+            });
         }
-        
-        card.innerHTML = `
-            <div class="engineer-name">
-                <i class="fas fa-user-hard-hat"></i>
-                ${engineer.name}
+    });
+};
+
+const createAssignmentCard = (list, engineer, startDate, endDate, isFirst = false) => {
+    const jobStartDate = document.getElementById('jobStartDate').value;
+    const jobEndDate = document.getElementById('jobEndDate').value;
+    
+    const card = document.createElement('div');
+    card.className = 'engineer-assignment-card';
+    card.dataset.engineerId = engineer.id;
+    
+    // Format rate display
+    let rateDisplay = '';
+    if (engineer.dayRate) {
+        rateDisplay = `<div class="rate-info">
+            <span class="rate-value">£${parseFloat(engineer.dayRate).toFixed(2)}</span>
+            <span class="rate-label">per day</span>
+        </div>`;
+    } else if (engineer.hourlyRate) {
+        rateDisplay = `<div class="rate-info">
+            <span class="rate-value">£${parseFloat(engineer.hourlyRate).toFixed(2)}</span>
+            <span class="rate-label">per hour</span>
+        </div>`;
+    }
+    
+    card.innerHTML = `
+        <div class="engineer-name">
+            <i class="fas fa-user-hard-hat"></i>
+            ${engineer.name}
+        </div>
+        <div class="date-inputs">
+            <div class="date-input-group">
+                <label>From:</label>
+                <input type="date" class="assignment-start" value="${startDate || jobStartDate}">
             </div>
-            <div class="date-inputs">
-                <div class="date-input-group">
-                    <label>From:</label>
-                    <input type="date" class="assignment-start" value="${startDate}">
-                </div>
-                <div class="date-input-group">
-                    <label>To:</label>
-                    <input type="date" class="assignment-end" value="${endDate}">
-                </div>
+            <div class="date-input-group">
+                <label>To:</label>
+                <input type="date" class="assignment-end" value="${endDate || jobEndDate}">
             </div>
-            ${rateDisplay}
-            <button type="button" class="remove-btn" title="Remove from job">
+        </div>
+        ${rateDisplay}
+        <div class="assignment-actions">
+            <button type="button" class="add-period-btn" title="Add another period for this engineer">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button type="button" class="remove-btn" title="${isFirst ? 'Remove engineer from job' : 'Remove this period'}">
                 <i class="fas fa-times"></i>
             </button>
-        `;
+        </div>
+    `;
+    
+    // Add period button - adds another date range for same engineer
+    card.querySelector('.add-period-btn').addEventListener('click', () => {
+        const newCard = document.createElement('div');
+        createAssignmentCard(list, engineer, jobStartDate, jobEndDate, false);
+        // Move the new card to right after this one
+        const allCards = list.querySelectorAll('.engineer-assignment-card');
+        const currentIndex = Array.from(allCards).indexOf(card);
+        if (currentIndex < allCards.length - 1) {
+            // Find next card that's NOT the same engineer
+            let insertBefore = null;
+            for (let i = currentIndex + 1; i < allCards.length; i++) {
+                if (allCards[i].dataset.engineerId !== engineer.id) {
+                    insertBefore = allCards[i];
+                    break;
+                }
+            }
+            if (insertBefore) {
+                list.insertBefore(list.lastChild, insertBefore);
+            }
+        }
+    });
+    
+    // Remove button listener
+    card.querySelector('.remove-btn').addEventListener('click', () => {
+        // Count how many cards exist for this engineer
+        const engineerCards = list.querySelectorAll(`.engineer-assignment-card[data-engineer-id="${engineer.id}"]`);
         
-        // Add remove button listener
-        card.querySelector('.remove-btn').addEventListener('click', () => {
-            // Deselect from the main engineer dropdown
+        if (engineerCards.length === 1) {
+            // This is the last card for this engineer - remove from job entirely
             const select = document.getElementById('jobEngineers');
             for (const option of select.options) {
-                if (option.value === engineerId) {
+                if (option.value === engineer.id) {
                     option.selected = false;
                     break;
                 }
             }
-            // Update the assignments display
-            updateEngineerAssignments();
             // Update daily exceptions dropdown
             const currentExceptions = getDailyExceptionsData();
             const jobStart = document.getElementById('jobStartDate').value;
             const jobEnd = document.getElementById('jobEndDate').value;
             const engIds = Array.from(document.getElementById('jobEngineers').selectedOptions).map(o => o.value);
             loadDailyExceptionsData(currentExceptions, jobStart, jobEnd, engIds);
-        });
+        }
         
-        list.appendChild(card);
+        // Remove just this card
+        card.remove();
     });
+    
+    list.appendChild(card);
 };
 
 const getEngineerAssignmentsData = () => {

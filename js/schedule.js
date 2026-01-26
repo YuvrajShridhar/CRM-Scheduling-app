@@ -179,14 +179,27 @@ const renderOfficeStaffSchedule = (dom, state, daysInView, bankHolidays, dateOnl
                             }
                         });
                     } else {
-                        // Regular jobs: check for engineer-specific date assignments
-                        const engineerAssignment = job.engineerAssignments?.find(a => a.engineerId === staff.id);
+                        // Regular jobs: check for engineer-specific date assignments (supports multiple periods)
+                        const engineerAssignments = job.engineerAssignments?.filter(a => a.engineerId === staff.id) || [];
                         
-                        // Use engineer-specific dates if available, otherwise use job dates
-                        const startDate = parseDate(engineerAssignment?.startDate || job.startDate);
-                        const endDate = parseDate(engineerAssignment?.endDate || job.endDate);
+                        // Check if this date falls within ANY of the engineer's assignment periods
+                        let isWithinAssignment = false;
                         
-                        if (dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate)) {
+                        if (engineerAssignments.length > 0) {
+                            // Check each assignment period
+                            isWithinAssignment = engineerAssignments.some(assignment => {
+                                const startDate = parseDate(assignment.startDate);
+                                const endDate = parseDate(assignment.endDate);
+                                return dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate);
+                            });
+                        } else {
+                            // No specific assignments, use job dates as fallback
+                            const startDate = parseDate(job.startDate);
+                            const endDate = parseDate(job.endDate);
+                            isWithinAssignment = dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate);
+                        }
+                        
+                        if (isWithinAssignment) {
                             const dayOfWeek = day.getDay();
                             if (job.allowWeekendWork || (dayOfWeek !== 0 && dayOfWeek !== 6)) {
                                 // Check if there's an exception for this date/engineer
@@ -264,14 +277,27 @@ const renderEngineersSchedule = (dom, state, daysInView, bankHolidays, dateOnlyF
                                 }
                             });
                         } else {
-                            // Regular jobs: check for engineer-specific date assignments
-                            const engineerAssignment = job.engineerAssignments?.find(a => a.engineerId === engineer.id);
+                            // Regular jobs: check for engineer-specific date assignments (supports multiple periods)
+                            const engineerAssignments = job.engineerAssignments?.filter(a => a.engineerId === engineer.id) || [];
                             
-                            // Use engineer-specific dates if available, otherwise use job dates
-                            const startDate = parseDate(engineerAssignment?.startDate || job.startDate);
-                            const endDate = parseDate(engineerAssignment?.endDate || job.endDate);
+                            // Check if this date falls within ANY of the engineer's assignment periods
+                            let isWithinAssignment = false;
                             
-                            if (dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate)) {
+                            if (engineerAssignments.length > 0) {
+                                // Check each assignment period
+                                isWithinAssignment = engineerAssignments.some(assignment => {
+                                    const startDate = parseDate(assignment.startDate);
+                                    const endDate = parseDate(assignment.endDate);
+                                    return dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate);
+                                });
+                            } else {
+                                // No specific assignments, use job dates as fallback
+                                const startDate = parseDate(job.startDate);
+                                const endDate = parseDate(job.endDate);
+                                isWithinAssignment = dateOnlyFn(day) >= dateOnlyFn(startDate) && dateOnlyFn(day) <= dateOnlyFn(endDate);
+                            }
+                            
+                            if (isWithinAssignment) {
                                 const dayOfWeek = day.getDay();
                                 if (job.allowWeekendWork || (dayOfWeek !== 0 && dayOfWeek !== 6)) {
                                     // Check if there's an exception for this date/engineer
